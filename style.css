@@ -84,6 +84,12 @@ h1 {
     box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 -2px 3px rgba(255,255,255,0.2);
 }
 
+/* تأثير إضاءة الحجر عند اختياره في المرحلة الثانية */
+.node.selected::after {
+    box-shadow: 0 0 12px 4px #ffcc00, 0 4px 8px rgba(0,0,0,0.4) !important;
+    transform: scale(1.05);
+}
+
 #reset-btn {
     background-color: #8b4513;
     color: white;
