@@ -27,7 +27,7 @@ h1 {
     color: #8d5b4c;
     font-size: 32px;
     letter-spacing: 2px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 #game-status {
@@ -40,7 +40,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* رقعة اللعب مع الخطوط المتشابكة والشبكة */
+/* رقعة اللعب المربعة الملساء */
 .board {
     width: 300px;
     height: 300px;
@@ -48,65 +48,43 @@ h1 {
     background-color: #d2a679;
     border: 4px solid #704214;
     border-radius: 12px;
-    position: relative;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    padding: 18px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 
-/* رسم الخطوط والأقطار والصلبان بوضوح داخل الرقعة */
-.board::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        /* القطر الأول */
-        linear-gradient(to top right, transparent calc(50% - 2.5px), #613b1d calc(50% - 2.5px), #613b1d calc(50% + 2.5px), transparent calc(50% + 2.5px)),
-        /* القطر الثاني */
-        linear-gradient(to top left, transparent calc(50% - 2.5px), #613b1d calc(50% - 2.5px), #613b1d calc(50% + 2.5px), transparent calc(50% + 2.5px)),
-        /* الخط الأفقي في المنتصف */
-        linear-gradient(to right, transparent calc(50% - 2.5px), #613b1d calc(50% - 2.5px), #613b1d calc(50% + 2.5px), transparent calc(50% + 2.5px)),
-        /* الخط العمودي في المنتصف */
-        linear-gradient(to bottom, transparent calc(50% - 2.5px), #613b1d calc(50% - 2.5px), #613b1d calc(50% + 2.5px), transparent calc(50% + 2.5px));
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* الخانات داخل الشبكة */
+/* الدوائر المجوفة تماماً كما في الصورة */
 .cell {
-    background-color: transparent;
+    background-color: #e5b388;
+    border-radius: 50%;
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(255, 255, 255, 0.4);
+    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    position: relative;
-    z-index: 2;
+    transition: background-color 0.2s;
 }
 
-/* القطع الدائرية الكبيرة */
+.cell:hover {
+    background-color: #dca779;
+}
+
+/* القطع التي ستوضع داخل الدوائر عند اللعب */
 .piece {
-    width: 75px;
-    height: 75px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     box-shadow: 2px 4px 8px rgba(0,0,0,0.3);
-    transition: transform 0.15s ease;
 }
 
-.cell:hover .piece {
-    transform: scale(1.05);
-}
-
-/* القطعة البيضاء */
 .piece.white {
     background: radial-gradient(circle at 35% 35%, #ffffff, #e6e6e6);
     border: 2px solid #ccc;
 }
 
-/* القطعة السوداء */
 .piece.black {
     background: radial-gradient(circle at 35% 35%, #4a4a4a, #222222);
     border: 2px solid #111;
