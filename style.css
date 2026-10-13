@@ -20,37 +20,42 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     text-align: center;
     width: 90%;
-    max-width: 400px;
+    max-width: 380px;
 }
 
 h1 {
     color: #8d5b4c;
+    font-size: 32px;
     letter-spacing: 2px;
     margin-bottom: 10px;
 }
 
 #game-status {
-    background-color: #f3e5ab;
+    background-color: #fceecb;
     padding: 10px;
     border-radius: 10px;
-    color: #5c3d2e;
+    color: #4a3427;
     font-weight: bold;
+    font-size: 16px;
     margin-bottom: 20px;
 }
 
-/* رقعة الرمل ذات الخطوط */
+/* رقعة اللعب مع الخطوط المتشابكة والشبكة */
 .board {
-    width: 280px;
-    height: 280px;
-    margin: 0 auto 20px auto;
-    background-color: #c2a685;
-    border: 4px solid #5c3d2e;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 25px auto;
+    background-color: #d2a679;
+    border: 4px solid #704214;
     border-radius: 12px;
     position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 
-/* رسم الأقطار والتصليب الداخلي (X و +) */
+/* رسم الخطوط والأقطار والصلبان بوضوح داخل الرقعة */
 .board::before {
     content: '';
     position: absolute;
@@ -59,63 +64,73 @@ h1 {
     width: 100%;
     height: 100%;
     background: 
-        linear-gradient(to top right, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px)),
-        linear-gradient(to top left, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px)),
-        linear-gradient(to right, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px)),
-        linear-gradient(to bottom, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px));
+        /* القطر الأول */
+        linear-gradient(to top right, transparent calc(50% - 2.5px), #613b1d calc(50% - 2.5px), #613b1d calc(50% + 2.5px), transparent calc(50% + 2.5px)),
+        /* القطر الثاني */
+        linear-gradient(to top left, transparent calc(50% - 2.5px), #613b1d calc(50% - 2.5px), #613b1d calc(50% + 2.5px), transparent calc(50% + 2.5px)),
+        /* الخط الأفقي في المنتصف */
+        linear-gradient(to right, transparent calc(50% - 2.5px), #613b1d calc(50% - 2.5px), #613b1d calc(50% + 2.5px), transparent calc(50% + 2.5px)),
+        /* الخط العمودي في المنتصف */
+        linear-gradient(to bottom, transparent calc(50% - 2.5px), #613b1d calc(50% - 2.5px), #613b1d calc(50% + 2.5px), transparent calc(50% + 2.5px));
     pointer-events: none;
+    z-index: 1;
 }
 
-/* نقاط التمركز/العُقد */
-.node {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    z-index: 2;
+/* الخانات داخل الشبكة */
+.cell {
+    background-color: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
 }
 
-/* قطعة اللعب */
+/* القطع الدائرية الكبيرة */
 .piece {
-    width: 32px;
-    height: 32px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: transform 0.2s;
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.15s ease;
 }
 
+.cell:hover .piece {
+    transform: scale(1.05);
+}
+
+/* القطعة البيضاء */
 .piece.white {
-    background: radial-gradient(circle at 30% 30%, #ffffff, #dcdcdc);
-    border: 2px solid #aaa;
+    background: radial-gradient(circle at 35% 35%, #ffffff, #e6e6e6);
+    border: 2px solid #ccc;
 }
 
+/* القطعة السوداء */
 .piece.black {
-    background: radial-gradient(circle at 30% 30%, #4a4a4a, #111111);
-    border: 2px solid #000;
+    background: radial-gradient(circle at 35% 35%, #4a4a4a, #222222);
+    border: 2px solid #111;
 }
 
-.node.selected .piece {
-    transform: scale(1.25);
-    box-shadow: 0 0 12px #e67e22;
-}
-
-/* الزر والنافذة */
+/* زر إعادة اللعبة */
 #reset-btn, .modal-content button {
     background-color: #8d5b4c;
     color: white;
     border: none;
-    padding: 10px 25px;
-    font-size: 16px;
-    border-radius: 8px;
+    padding: 12px 30px;
+    font-size: 18px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: background 0.2s;
 }
 
+#reset-btn:hover, .modal-content button:hover {
+    background-color: #724638;
+}
+
+/* النافذة المنبثقة للفوز */
 .modal {
     display: none;
     position: fixed;
@@ -123,7 +138,7 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
     z-index: 10;
@@ -134,4 +149,9 @@ h1 {
     padding: 30px;
     border-radius: 15px;
     text-align: center;
+}
+
+.trophy-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
 }
