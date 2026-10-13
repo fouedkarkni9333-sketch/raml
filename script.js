@@ -3,141 +3,78 @@ const gameStatus = document.getElementById('game-status');
 const winModal = document.getElementById('win-modal');
 const winnerText = document.getElementById('winner-text');
 
-// إحداثيات النقاط 9 على الرقعة (بنسب مئوية)
-const nodePositions = [
-    { top: '10%', left: '10%' }, { top: '10%', left: '50%' }, { top: '10%', left: '90%' },
-    { top: '50%', left: '10%' }, { top: '50%', left: '50%' }, { top: '50%', left: '90%' },
-    { top: '90%', left: '10%' }, { top: '90%', left: '50%' }, { top: '90%', left: '90%' }
-];
+let boardState = Array(9).fill(null);
+let currentPlayer = 'white';
+let gameActive = true;
 
-// العقد المجاورة المسموح بالانتقال إليها لكل عقدة
-const adjacencies = {
-    0: [1, 3, 4],
-    1: [0, 2, 4],
-    2: [1, 5, 4],
-    3: [0, 6, 4],
-    4: [0, 1, 2, 3, 5, 6, 7, 8], // النقطة الوسطى تتصل بكل النقاط
-    5: [2, 8, 4],
-    6: [3, 7, 4],
-    7: [6, 8, 4],
-    8: [5, 7, 4]
-};
-
-// طرق الفوز (3 نقاط على خط واحد)
-const winLines = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // صفوف افقية
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // أعمدة رأسية
+const winPatterns = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // أفقية
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // رأسية
     [0, 4, 8], [2, 4, 6]             // أقطار
 ];
 
-let boardState = Array(9).fill(null); // null, 'white', 'black'
-let currentPlayer = 'white'; // 'white' أو 'black'
-let selectedNode = null;
-let gamePhase = 'drop'; // مرحلة وضع القطع 'drop' ثم مرحلة التحريك 'move'
-let piecesDropped = { white: 0, black: 0 };
-
-function initBoard() {
+function initGame() {
     boardElement.innerHTML = '';
     boardState = Array(9).fill(null);
     currentPlayer = 'white';
-    selectedNode = null;
-    gamePhase = 'drop';
-    piecesDropped = { white: 0, black: 0 };
+    gameActive = true;
     winModal.style.display = 'none';
     updateStatus();
 
-    nodePositions.forEach((pos, index) => {
-        const node = document.createElement('div');
-        node.className = 'node';
-        node.style.top = pos.top;
-        node.style.left = pos.left;
-        node.dataset.index = index;
-        node.addEventListener('click', () => handleNodeClick(index));
-        boardElement.appendChild(node);
-    });
-}
-
-function handleNodeClick(index) {
-    if (gamePhase === 'drop') {
-        // مرحلة وضع القطع الـ 3 الأولى لكل لاعب
-        if (boardState[index] === null) {
-            boardState[index] = currentPlayer;
-            piecesDropped[currentPlayer]++;
-            
-            if (piecesDropped.white === 3 && piecesDropped.black === 3) {
-                gamePhase = 'move';
-            }
-            
-            if (checkWin(currentPlayer)) {
-                endGame(currentPlayer);
-                return;
-            }
-
-            switchPlayer();
-        }
-    } else if (gamePhase === 'move') {
-        // مرحلة تحريك القطع
-        if (selectedNode === null) {
-            if (boardState[index] === currentPlayer) {
-                selectedNode = index;
-            }
-        } else {
-            if (index === selectedNode) {
-                selectedNode = null; // إلغاء التحديد
-            } else if (boardState[index] === null && adjacencies[selectedNode].includes(index)) {
-                // نقل قطعة إلى مكان مجاور فارغ
-                boardState[selectedNode] = null;
-                boardState[index] = currentPlayer;
-                selectedNode = null;
-
-                if (checkWin(currentPlayer)) {
-                    renderBoard();
-                    endGame(currentPlayer);
-                    return;
-                }
-
-                switchPlayer();
-            }
-        }
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.index = i;
+        cell.addEventListener('click', () => handleCellClick(i));
+        boardElement.appendChild(cell);
     }
-    renderBoard();
 }
 
-function switchPlayer() {
+function handleCellClick(index) {
+    if (boardState[index] !== null || !gameActive) return;
+
+    boardState[index] = currentPlayer;
+    renderBoard();
+
+    if (checkWin(currentPlayer)) {
+        gameActive = false;
+        setTimeout(() => endGame(currentPlayer), 100);
+        return;
+    }
+
+    if (boardState.every(cell => cell !== null)) {
+        gameActive = false;
+        gameStatus.innerText = 'تعادل!';
+        return;
+    }
+
     currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
     updateStatus();
 }
 
 function updateStatus() {
-    const name = currentPlayer === 'white' ? 'الأول (الأبيض)' : 'الثاني (الأسود)';
-    if (gamePhase === 'drop') {
-        gameStatus.innerText = `دور اللاعب ${name} - ضع قطعة`;
+    if (currentPlayer === 'white') {
+        gameStatus.innerText = 'دور: اللاعب الأول (الأبيض)';
     } else {
-        gameStatus.innerText = `دور اللاعب ${name} - حرك قطعة`;
+        gameStatus.innerText = 'دور: اللاعب الثاني (الأسود)';
     }
 }
 
 function renderBoard() {
-    const nodes = boardElement.querySelectorAll('.node');
-    nodes.forEach((node, index) => {
-        node.innerHTML = '';
-        node.classList.remove('selected');
-
+    const cells = boardElement.querySelectorAll('.cell');
+    cells.forEach((cell, index) => {
+        cell.innerHTML = '';
         if (boardState[index]) {
             const piece = document.createElement('div');
             piece.className = `piece ${boardState[index]}`;
-            node.appendChild(piece);
-        }
-
-        if (selectedNode === index) {
-            node.classList.add('selected');
+            cell.appendChild(piece);
         }
     });
 }
 
 function checkWin(player) {
-    return winLines.some(line => {
-        return line.every(index => boardState[index] === player);
+    return winPatterns.some(pattern => {
+        return pattern.every(index => boardState[index] === player);
     });
 }
 
@@ -148,8 +85,7 @@ function endGame(winner) {
 }
 
 function resetGame() {
-    initBoard();
+    initGame();
 }
 
-// تشغيل اللعبة عند التحميل
-initBoard();
+initGame();
