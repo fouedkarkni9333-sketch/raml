@@ -66,7 +66,6 @@ h1 {
     transform: scale(1.03);
 }
 
-/* شكل حجر اللاعب الأول (الأبيض الصحراوي) */
 .node.piece-1::after {
     content: '';
     width: 75%;
@@ -76,7 +75,6 @@ h1 {
     box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 -2px 3px rgba(0,0,0,0.15);
 }
 
-/* شكل حجر اللاعب الثاني (الأسود / الحصى الداكن) */
 .node.piece-2::after {
     content: '';
     width: 75%;
@@ -102,4 +100,78 @@ h1 {
 #reset-btn:hover {
     background-color: #a0522d;
     transform: translateY(-2px);
+}
+
+/* تنسيق النافذة الاحتفالية المتحركة (Modal) */
+.modal {
+    display: none; /* مخفية افتراضياً */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fdf5e6;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    border: 3px solid #8b4513;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    max-width: 320px;
+    width: 80%;
+    animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popUp {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.trophy-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+}
+
+.modal-content h2 {
+    color: #8b4513;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    color: #5c4033;
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-content button {
+    background-color: #8b4513;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.modal-content button:hover {
+    background-color: #a0522d;
 }
