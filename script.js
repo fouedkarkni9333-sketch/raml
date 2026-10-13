@@ -6,13 +6,13 @@ const winnerText = document.getElementById('winner-text');
 let boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 let currentPlayer = 1; // 1 للأبيض، 2 للأسود
 let isGameActive = true;
-let selectedPieceIndex = null; // لتخزين الحجر الذي تم اختياره للحركة
+let selectedPieceIndex = null;
 
 let whitePiecesPlaced = 0;
 let blackPiecesPlaced = 0;
-const maxPiecesPerPlayer = 3; // لكل لاعب 3 أحجار في المرحلة الثانية
+const maxPiecesPerPlayer = 3;
 
-// مولد صوت الحصى على الرمل
+// مولد صوت احتكاك الحصى على الرمل
 function playSandSound() {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -72,9 +72,7 @@ function handleNodeClick(index) {
 
     // --- المرحلة الأولى: وضع الأحجار ---
     if (totalPlaced < maxPiecesPerPlayer * 2) {
-        // يجب أن يكون دور اللاعب الحالي ووضع في خانة فارغة
         const isWhiteTurn = currentPlayer === 1;
-        const isCurrentPlayerPiece = isWhiteTurn ? (whitePiecesPlaced < maxPiecesPerPlayer) : (blackPiecesPlaced < maxPiecesPerPlayer);
 
         if (boardState[index] !== 0) return; // الخانة مشغولة
 
@@ -87,93 +85,56 @@ function handleNodeClick(index) {
             blackPiecesPlaced++;
         }
 
+        // إمكانية المحاصرة حتى أثناء الوضع
+        checkAndRemoveCapturedPieces(index, currentPlayer);
+
         if (checkWin(currentPlayer)) {
             endGame(currentPlayer);
             return;
         }
 
-        // تبديل الدور
         currentPlayer = currentPlayer === 1 ? 2 : 1;
         updateStatus();
         createBoard();
         return;
     }
 
-    // --- المرحلة الثانية: تحريك الأحجار ---
+    // --- المرحلة الثانية: تحريك الأحجار والمحاصرة ---
     const isWhiteTurn = currentPlayer === 1;
     const playerPieceValue = isWhiteTurn ? 1 : 2;
 
     if (selectedPieceIndex === null) {
-        // الخطوة أ: اختيار الحجر المراد تحريكه
+        // تحديد الحجر المراد تحريكه
         if (boardState[index] === playerPieceValue) {
             selectedPieceIndex = index;
             playSandSound();
             createBoard();
         }
     } else {
-        // الخطوة ب: نقل الحجر المختار إلى خانة فارغة جديدة
+        // نقل الحجر إلى مكان فارغ
         if (boardState[index] === 0) {
             playSandSound();
             boardState[selectedPieceIndex] = 0; // تفريغ المكان القديم
             boardState[index] = playerPieceValue; // وضع الحجر في المكان الجديد
-            selectedPieceIndex = null; // إلغاء التحديد
+            selectedPieceIndex = null;
+
+            // تنفيذ فحص المحاصرة والأكل عند الاستقرار في المكان الجديد
+            checkAndRemoveCapturedPieces(index, currentPlayer);
 
             if (checkWin(currentPlayer)) {
                 endGame(currentPlayer);
                 return;
             }
 
-            // تبديل الدور
             currentPlayer = currentPlayer === 1 ? 2 : 1;
             updateStatus();
             createBoard();
         } else if (boardState[index] === playerPieceValue) {
-            // تغيير الحجر المحدد إذا نقر اللاعب على حجر آخر لنفسه
+            // تغيير الحجر المختار
             selectedPieceIndex = index;
             createBoard();
         }
     }
 }
 
-function updateStatus() {
-    const totalPlaced = whitePiecesPlaced + blackPiecesPlaced;
-    if (totalPlaced < maxPiecesPerPlayer * 2) {
-        statusElement.innerText = currentPlayer === 1 ? "مرحلة الوضع: دور الأبيض" : "مرحلة الوضع: دور الأسود";
-    } else {
-        statusElement.innerText = currentPlayer === 1 ? "مرحلة الحركة: دور الأبيض" : "مرحلة الحركة: دور الأسود";
-    }
-}
-
-function checkWin(player) {
-    const winPatterns = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], // أفقياً
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], // عمودياً
-        [0, 4, 8], [2, 4, 6]            // قطرياً
-    ];
-
-    return winPatterns.some(pattern => {
-        return pattern.every(index => boardState[index] === player);
-    });
-}
-
-function endGame(player) {
-    const winnerName = player === 1 ? 'اللاعب الأول (الأبيض)' : 'اللاعب الثاني (الأسود)';
-    winnerText.innerText = `🎉 فاز ${winnerName}!`;
-    winModal.style.display = 'flex';
-    isGameActive = false;
-    createBoard();
-}
-
-function resetGame() {
-    boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    currentPlayer = 1;
-    isGameActive = true;
-    selectedPieceIndex = null;
-    whitePiecesPlaced = 0;
-    blackPiecesPlaced = 0;
-    statusElement.innerText = "مرحلة الوضع: دور الأبيض";
-    winModal.style.display = 'none';
-    createBoard();
-}
-
-createBoard();
+// دالة فحص محاصرة قطعة الخصم (أكل
