@@ -9,14 +9,22 @@
 <body>
     <div class="game-container">
         <h1>RAML</h1>
-        <p id="game-status">الدور: اللاعب الأول (الأبيض)</p>
+        <p id="game-status">دور اللاعب الأول (الأبيض)</p>
         
-        <!-- رقعة اللعب (شبكة التقاطعات) -->
-        <div class="board" id="board">
-            <!-- سيتم توليد نقاط اللعبة برمجياً عبر الـ JavaScript -->
-        </div>
+        <!-- رقعة اللعب -->
+        <div class="board" id="board"></div>
 
         <button id="reset-btn" onclick="resetGame()">إعادة اللعبة</button>
+    </div>
+
+    <!-- نافذة الاحتفال المتحركة عند الفوز -->
+    <div id="win-modal" class="modal">
+        <div class="modal-content">
+            <div class="trophy-icon">🏆</div>
+            <h2 id="winner-text">مبروك الفوز!</h2>
+            <p>لقد أحكمت السيطرة على الرمال بنجاح.</p>
+            <button onclick="resetGame()">لعب من جديد</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
