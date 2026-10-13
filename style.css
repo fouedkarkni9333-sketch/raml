@@ -1,5 +1,5 @@
 body {
-    background-color: #d2b48c; /* لون رملي دافئ */
+    background-color: #d2b48c;
     font-family: Arial, sans-serif;
     text-align: center;
     margin: 0;
@@ -8,78 +8,98 @@ body {
 }
 
 .game-container {
-    max-width: 400px;
+    max-width: 420px;
     margin: auto;
     background: #fdf5e6;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    border: 2px solid #c8ad7f;
 }
 
 h1 {
     margin-bottom: 5px;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     color: #8b4513;
+    font-size: 28px;
 }
 
 #game-status {
     font-size: 16px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-weight: bold;
+    color: #5c4033;
+    background: #f4e3c1;
+    padding: 8px;
+    border-radius: 6px;
 }
 
 .board {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 15px;
-    width: 250px;
-    height: 250px;
+    gap: 12px;
+    width: 280px;
+    height: 280px;
     margin: 20px auto;
-    background: #deb887;
+    background: #c8ad7f;
     padding: 15px;
-    border-radius: 8px;
-    border: 3px solid #8b4513;
+    border-radius: 10px;
+    border: 4px solid #654321;
+    box-shadow: inset 0 5px 10px rgba(0,0,0,0.2);
 }
 
 .node {
-    background-color: #f4a460;
+    background-color: #e3bc9a;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    box-shadow: inset 0 3px 5px rgba(0,0,0,0.3);
-    transition: 0.2s;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    position: relative;
 }
 
 .node:hover {
-    background-color: #e59866;
+    background-color: #d4a373;
+    transform: scale(1.03);
 }
 
-.piece-1 {
-    background-color: #ffffff !important;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+/* شكل حجر اللاعب الأول (الأبيض الصحراوي) */
+.node.piece-1::after {
+    content: '';
+    width: 75%;
+    height: 75%;
+    background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 -2px 3px rgba(0,0,0,0.15);
 }
 
-.piece-2 {
-    background-color: #333333 !important;
-    color: white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+/* شكل حجر اللاعب الثاني (الأسود / الحصى الداكن) */
+.node.piece-2::after {
+    content: '';
+    width: 75%;
+    height: 75%;
+    background: radial-gradient(circle at 30% 30%, #555555, #222222);
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 -2px 3px rgba(255,255,255,0.2);
 }
 
 #reset-btn {
     background-color: #8b4513;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 25px;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     margin-top: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    transition: 0.2s;
 }
 
 #reset-btn:hover {
     background-color: #a0522d;
+    transform: translateY(-2px);
 }
