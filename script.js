@@ -1,12 +1,14 @@
 const boardElement = document.getElementById('board');
 const statusElement = document.getElementById('game-status');
+const winModal = document.getElementById('win-modal');
+const winnerText = document.getElementById('winner-text');
 
 let boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 let currentPlayer = 1; // 1 للأبيض، 2 للأسود
 let isGameActive = true;
 let totalMoves = 0;
 
-// مولد صوت الحصى على الرمل باستخدام Web Audio API
+// مولد صوت الحصى على الرمل
 function playSandSound() {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -14,8 +16,7 @@ function playSandSound() {
             audioCtx.resume();
         }
 
-        // إنشاء ضوضاء بيضاء تشبه صوت احتكاك الحبيبات (الرمل/الحصى)
-        const bufferSize = audioCtx.sampleRate * 0.08; // مدة قصيرة جداً (80 جزء من الألف من الثانية)
+        const bufferSize = audioCtx.sampleRate * 0.08;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         
@@ -26,10 +27,9 @@ function playSandSound() {
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
-        // فلتر لضبط نبرة الصوت لتكون خشنة وعميقة تشبه الحصى
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'bandpass';
-        filter.frequency.value = 800; // تردد يناسب صوت الاصطدام الخفيف
+        filter.frequency.value = 800;
         filter.Q.value = 1.0;
 
         const gainNode = audioCtx.createGain();
@@ -63,21 +63,23 @@ function createBoard() {
 function handleNodeClick(index) {
     if (!isGameActive || boardState[index] !== 0) return;
 
-    // تشغيل صوت الحصى فور النقر ووضع الحجر
     playSandSound();
 
     boardState[index] = currentPlayer;
     totalMoves++;
 
     if (checkWin(currentPlayer)) {
-        statusElement.innerText = `🎉 فاز اللاعب ${currentPlayer === 1 ? 'الأول (الأبيض)' : 'الثاني (الأسود)'}!`;
+        const winnerName = currentPlayer === 1 ? 'اللاعب الأول (الأبيض)' : 'اللاعب الثاني (الأسود)';
+        winnerText.innerText = `🎉 فاز ${winnerName}!`;
+        winModal.style.display = 'flex'; // إظهار نافذة الاحتفال المتحركة
         isGameActive = false;
         createBoard();
         return;
     }
 
     if (totalMoves === 9) {
-        statusElement.innerText = "انتهت الجولة تعادلاً! اضغط إعادة اللعبة.";
+        winnerText.innerText = "🤝 تعادل الفريقان!";
+        winModal.style.display = 'flex';
         isGameActive = false;
         createBoard();
         return;
@@ -107,6 +109,7 @@ function resetGame() {
     isGameActive = true;
     totalMoves = 0;
     statusElement.innerText = "دور اللاعب الأول (الأبيض)";
+    winModal.style.display = 'none'; // إخفاء النافذة عند إعادة اللعبة
     createBoard();
 }
 
