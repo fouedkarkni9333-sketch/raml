@@ -1,140 +1,155 @@
 const boardElement = document.getElementById('board');
-const statusElement = document.getElementById('game-status');
+const gameStatus = document.getElementById('game-status');
 const winModal = document.getElementById('win-modal');
 const winnerText = document.getElementById('winner-text');
 
-let boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-let currentPlayer = 1; // 1 للأبيض، 2 للأسود
-let isGameActive = true;
-let selectedPieceIndex = null;
+// إحداثيات النقاط 9 على الرقعة (بنسب مئوية)
+const nodePositions = [
+    { top: '10%', left: '10%' }, { top: '10%', left: '50%' }, { top: '10%', left: '90%' },
+    { top: '50%', left: '10%' }, { top: '50%', left: '50%' }, { top: '50%', left: '90%' },
+    { top: '90%', left: '10%' }, { top: '90%', left: '50%' }, { top: '90%', left: '90%' }
+];
 
-let whitePiecesPlaced = 0;
-let blackPiecesPlaced = 0;
-const maxPiecesPerPlayer = 3;
+// العقد المجاورة المسموح بالانتقال إليها لكل عقدة
+const adjacencies = {
+    0: [1, 3, 4],
+    1: [0, 2, 4],
+    2: [1, 5, 4],
+    3: [0, 6, 4],
+    4: [0, 1, 2, 3, 5, 6, 7, 8], // النقطة الوسطى تتصل بكل النقاط
+    5: [2, 8, 4],
+    6: [3, 7, 4],
+    7: [6, 8, 4],
+    8: [5, 7, 4]
+};
 
-// مولد صوت احتكاك الحصى على الرمل
-function playSandSound() {
-    try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+// طرق الفوز (3 نقاط على خط واحد)
+const winLines = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // صفوف افقية
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // أعمدة رأسية
+    [0, 4, 8], [2, 4, 6]             // أقطار
+];
 
-        const bufferSize = audioCtx.sampleRate * 0.08;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
+let boardState = Array(9).fill(null); // null, 'white', 'black'
+let currentPlayer = 'white'; // 'white' أو 'black'
+let selectedNode = null;
+let gamePhase = 'drop'; // مرحلة وضع القطع 'drop' ثم مرحلة التحريك 'move'
+let piecesDropped = { white: 0, black: 0 };
 
-        const noise = audioCtx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 800;
-        filter.Q.value = 1.0;
-
-        const gainNode = audioCtx.createGain();
-        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-
-        noise.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        noise.start();
-    } catch (e) {
-        console.log("Audio not supported or blocked", e);
-    }
-}
-
-function createBoard() {
+function initBoard() {
     boardElement.innerHTML = '';
-    boardState.forEach((cell, index) => {
-        const node = document.createElement('div');
-        node.classList.add('node');
-        
-        if (cell === 1) node.classList.add('piece-1');
-        if (cell === 2) node.classList.add('piece-2');
-        if (selectedPieceIndex === index) node.classList.add('selected');
+    boardState = Array(9).fill(null);
+    currentPlayer = 'white';
+    selectedNode = null;
+    gamePhase = 'drop';
+    piecesDropped = { white: 0, black: 0 };
+    winModal.style.display = 'none';
+    updateStatus();
 
+    nodePositions.forEach((pos, index) => {
+        const node = document.createElement('div');
+        node.className = 'node';
+        node.style.top = pos.top;
+        node.style.left = pos.left;
+        node.dataset.index = index;
         node.addEventListener('click', () => handleNodeClick(index));
         boardElement.appendChild(node);
     });
 }
 
 function handleNodeClick(index) {
-    if (!isGameActive) return;
-
-    const totalPlaced = whitePiecesPlaced + blackPiecesPlaced;
-
-    // --- المرحلة الأولى: وضع الأحجار ---
-    if (totalPlaced < maxPiecesPerPlayer * 2) {
-        const isWhiteTurn = currentPlayer === 1;
-
-        if (boardState[index] !== 0) return; // الخانة مشغولة
-
-        playSandSound();
-        boardState[index] = currentPlayer;
-
-        if (isWhiteTurn) {
-            whitePiecesPlaced++;
-        } else {
-            blackPiecesPlaced++;
-        }
-
-        // إمكانية المحاصرة حتى أثناء الوضع
-        checkAndRemoveCapturedPieces(index, currentPlayer);
-
-        if (checkWin(currentPlayer)) {
-            endGame(currentPlayer);
-            return;
-        }
-
-        currentPlayer = currentPlayer === 1 ? 2 : 1;
-        updateStatus();
-        createBoard();
-        return;
-    }
-
-    // --- المرحلة الثانية: تحريك الأحجار والمحاصرة ---
-    const isWhiteTurn = currentPlayer === 1;
-    const playerPieceValue = isWhiteTurn ? 1 : 2;
-
-    if (selectedPieceIndex === null) {
-        // تحديد الحجر المراد تحريكه
-        if (boardState[index] === playerPieceValue) {
-            selectedPieceIndex = index;
-            playSandSound();
-            createBoard();
-        }
-    } else {
-        // نقل الحجر إلى مكان فارغ
-        if (boardState[index] === 0) {
-            playSandSound();
-            boardState[selectedPieceIndex] = 0; // تفريغ المكان القديم
-            boardState[index] = playerPieceValue; // وضع الحجر في المكان الجديد
-            selectedPieceIndex = null;
-
-            // تنفيذ فحص المحاصرة والأكل عند الاستقرار في المكان الجديد
-            checkAndRemoveCapturedPieces(index, currentPlayer);
-
+    if (gamePhase === 'drop') {
+        // مرحلة وضع القطع الـ 3 الأولى لكل لاعب
+        if (boardState[index] === null) {
+            boardState[index] = currentPlayer;
+            piecesDropped[currentPlayer]++;
+            
+            if (piecesDropped.white === 3 && piecesDropped.black === 3) {
+                gamePhase = 'move';
+            }
+            
             if (checkWin(currentPlayer)) {
                 endGame(currentPlayer);
                 return;
             }
 
-            currentPlayer = currentPlayer === 1 ? 2 : 1;
-            updateStatus();
-            createBoard();
-        } else if (boardState[index] === playerPieceValue) {
-            // تغيير الحجر المختار
-            selectedPieceIndex = index;
-            createBoard();
+            switchPlayer();
         }
+    } else if (gamePhase === 'move') {
+        // مرحلة تحريك القطع
+        if (selectedNode === null) {
+            if (boardState[index] === currentPlayer) {
+                selectedNode = index;
+            }
+        } else {
+            if (index === selectedNode) {
+                selectedNode = null; // إلغاء التحديد
+            } else if (boardState[index] === null && adjacencies[selectedNode].includes(index)) {
+                // نقل قطعة إلى مكان مجاور فارغ
+                boardState[selectedNode] = null;
+                boardState[index] = currentPlayer;
+                selectedNode = null;
+
+                if (checkWin(currentPlayer)) {
+                    renderBoard();
+                    endGame(currentPlayer);
+                    return;
+                }
+
+                switchPlayer();
+            }
+        }
+    }
+    renderBoard();
+}
+
+function switchPlayer() {
+    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+    updateStatus();
+}
+
+function updateStatus() {
+    const name = currentPlayer === 'white' ? 'الأول (الأبيض)' : 'الثاني (الأسود)';
+    if (gamePhase === 'drop') {
+        gameStatus.innerText = `دور اللاعب ${name} - ضع قطعة`;
+    } else {
+        gameStatus.innerText = `دور اللاعب ${name} - حرك قطعة`;
     }
 }
 
-// دالة فحص محاصرة قطعة الخصم (أكل
+function renderBoard() {
+    const nodes = boardElement.querySelectorAll('.node');
+    nodes.forEach((node, index) => {
+        node.innerHTML = '';
+        node.classList.remove('selected');
+
+        if (boardState[index]) {
+            const piece = document.createElement('div');
+            piece.className = `piece ${boardState[index]}`;
+            node.appendChild(piece);
+        }
+
+        if (selectedNode === index) {
+            node.classList.add('selected');
+        }
+    });
+}
+
+function checkWin(player) {
+    return winLines.some(line => {
+        return line.every(index => boardState[index] === player);
+    });
+}
+
+function endGame(winner) {
+    const winnerName = winner === 'white' ? 'اللاعب الأول (الأبيض)' : 'اللاعب الثاني (الأسود)';
+    winnerText.innerText = `مبروك! فوز ${winnerName}`;
+    winModal.style.display = 'flex';
+}
+
+function resetGame() {
+    initBoard();
+}
+
+// تشغيل اللعبة عند التحميل
+initBoard();
