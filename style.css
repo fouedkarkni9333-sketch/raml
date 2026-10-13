@@ -31,54 +31,46 @@ h1 {
 
 #game-status {
     background-color: #f3e5ab;
-    padding: 8px 15px;
+    padding: 10px;
     border-radius: 10px;
     color: #5c3d2e;
     font-weight: bold;
     margin-bottom: 20px;
 }
 
-/* رقعة اللعب الرسمية */
+/* رقعة الرمل ذات الخطوط */
 .board {
-    width: 300px;
-    height: 300px;
+    width: 280px;
+    height: 280px;
     margin: 0 auto 20px auto;
     background-color: #c2a685;
-    border: 5px solid #5c3d2e;
+    border: 4px solid #5c3d2e;
     border-radius: 12px;
     position: relative;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 
-/* خطوط المربع والقطرين (علامة X) */
-.board::before, .board::after {
+/* رسم الأقطار والتصليب الداخلي (X و +) */
+.board::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    background: 
+        linear-gradient(to top right, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px)),
+        linear-gradient(to top left, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px)),
+        linear-gradient(to right, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px)),
+        linear-gradient(to bottom, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px));
     pointer-events: none;
 }
 
-.board::before {
-    background: 
-        linear-gradient(to top right, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px)),
-        linear-gradient(to top left, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px));
-}
-
-.board::after {
-    background: 
-        linear-gradient(to right, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px)),
-        linear-gradient(to bottom, transparent calc(50% - 2px), #7a5c43 calc(50% - 2px), #7a5c43 calc(50% + 2px), transparent calc(50% + 2px));
-}
-
-/* العقد / نقاط التمركز */
+/* نقاط التمركز/العُقد */
 .node {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.3);
     position: absolute;
     transform: translate(-50%, -50%);
     cursor: pointer;
@@ -86,17 +78,12 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.2s ease;
 }
 
-.node:hover {
-    background-color: rgba(255, 255, 255, 0.6);
-}
-
-/* قطع اللعب */
+/* قطعة اللعب */
 .piece {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     transition: transform 0.2s;
@@ -113,11 +100,11 @@ h1 {
 }
 
 .node.selected .piece {
-    transform: scale(1.2);
-    box-shadow: 0 0 10px #e67e22;
+    transform: scale(1.25);
+    box-shadow: 0 0 12px #e67e22;
 }
 
-/* أزرار التحكم */
+/* الزر والنافذة */
 #reset-btn, .modal-content button {
     background-color: #8d5b4c;
     color: white;
@@ -127,14 +114,8 @@ h1 {
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
-    transition: background 0.3s;
 }
 
-#reset-btn:hover, .modal-content button:hover {
-    background-color: #6e4437;
-}
-
-/* النافذة المنبثقة للفوز */
 .modal {
     display: none;
     position: fixed;
@@ -142,7 +123,7 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0,0,0,0.6);
     justify-content: center;
     align-items: center;
     z-index: 10;
@@ -153,15 +134,4 @@ h1 {
     padding: 30px;
     border-radius: 15px;
     text-align: center;
-    animation: popIn 0.3s ease;
-}
-
-.trophy-icon {
-    font-size: 50px;
-    margin-bottom: 10px;
-}
-
-@keyframes popIn {
-    from { transform: scale(0.7); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
 }
