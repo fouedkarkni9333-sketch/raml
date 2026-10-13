@@ -6,7 +6,11 @@ const winnerText = document.getElementById('winner-text');
 let boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 let currentPlayer = 1; // 1 للأبيض، 2 للأسود
 let isGameActive = true;
-let totalMoves = 0;
+let selectedPieceIndex = null; // لتخزين الحجر الذي تم اختياره للحركة
+
+let whitePiecesPlaced = 0;
+let blackPiecesPlaced = 0;
+const maxPiecesPerPlayer = 3; // لكل لاعب 3 أحجار في المرحلة الثانية
 
 // مولد صوت الحصى على الرمل
 function playSandSound() {
@@ -54,6 +58,7 @@ function createBoard() {
         
         if (cell === 1) node.classList.add('piece-1');
         if (cell === 2) node.classList.add('piece-2');
+        if (selectedPieceIndex === index) node.classList.add('selected');
 
         node.addEventListener('click', () => handleNodeClick(index));
         boardElement.appendChild(node);
@@ -61,34 +66,82 @@ function createBoard() {
 }
 
 function handleNodeClick(index) {
-    if (!isGameActive || boardState[index] !== 0) return;
+    if (!isGameActive) return;
 
-    playSandSound();
+    const totalPlaced = whitePiecesPlaced + blackPiecesPlaced;
 
-    boardState[index] = currentPlayer;
-    totalMoves++;
+    // --- المرحلة الأولى: وضع الأحجار ---
+    if (totalPlaced < maxPiecesPerPlayer * 2) {
+        // يجب أن يكون دور اللاعب الحالي ووضع في خانة فارغة
+        const isWhiteTurn = currentPlayer === 1;
+        const isCurrentPlayerPiece = isWhiteTurn ? (whitePiecesPlaced < maxPiecesPerPlayer) : (blackPiecesPlaced < maxPiecesPerPlayer);
 
-    if (checkWin(currentPlayer)) {
-        const winnerName = currentPlayer === 1 ? 'اللاعب الأول (الأبيض)' : 'اللاعب الثاني (الأسود)';
-        winnerText.innerText = `🎉 فاز ${winnerName}!`;
-        winModal.style.display = 'flex'; // إظهار نافذة الاحتفال المتحركة
-        isGameActive = false;
+        if (boardState[index] !== 0) return; // الخانة مشغولة
+
+        playSandSound();
+        boardState[index] = currentPlayer;
+
+        if (isWhiteTurn) {
+            whitePiecesPlaced++;
+        } else {
+            blackPiecesPlaced++;
+        }
+
+        if (checkWin(currentPlayer)) {
+            endGame(currentPlayer);
+            return;
+        }
+
+        // تبديل الدور
+        currentPlayer = currentPlayer === 1 ? 2 : 1;
+        updateStatus();
         createBoard();
         return;
     }
 
-    if (totalMoves === 9) {
-        winnerText.innerText = "🤝 تعادل الفريقان!";
-        winModal.style.display = 'flex';
-        isGameActive = false;
-        createBoard();
-        return;
+    // --- المرحلة الثانية: تحريك الأحجار ---
+    const isWhiteTurn = currentPlayer === 1;
+    const playerPieceValue = isWhiteTurn ? 1 : 2;
+
+    if (selectedPieceIndex === null) {
+        // الخطوة أ: اختيار الحجر المراد تحريكه
+        if (boardState[index] === playerPieceValue) {
+            selectedPieceIndex = index;
+            playSandSound();
+            createBoard();
+        }
+    } else {
+        // الخطوة ب: نقل الحجر المختار إلى خانة فارغة جديدة
+        if (boardState[index] === 0) {
+            playSandSound();
+            boardState[selectedPieceIndex] = 0; // تفريغ المكان القديم
+            boardState[index] = playerPieceValue; // وضع الحجر في المكان الجديد
+            selectedPieceIndex = null; // إلغاء التحديد
+
+            if (checkWin(currentPlayer)) {
+                endGame(currentPlayer);
+                return;
+            }
+
+            // تبديل الدور
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            updateStatus();
+            createBoard();
+        } else if (boardState[index] === playerPieceValue) {
+            // تغيير الحجر المحدد إذا نقر اللاعب على حجر آخر لنفسه
+            selectedPieceIndex = index;
+            createBoard();
+        }
     }
+}
 
-    currentPlayer = currentPlayer === 1 ? 2 : 1;
-    statusElement.innerText = currentPlayer === 1 ? "دور اللاعب الأول (الأبيض)" : "دور اللاعب الثاني (الأسود)";
-
-    createBoard();
+function updateStatus() {
+    const totalPlaced = whitePiecesPlaced + blackPiecesPlaced;
+    if (totalPlaced < maxPiecesPerPlayer * 2) {
+        statusElement.innerText = currentPlayer === 1 ? "مرحلة الوضع: دور الأبيض" : "مرحلة الوضع: دور الأسود";
+    } else {
+        statusElement.innerText = currentPlayer === 1 ? "مرحلة الحركة: دور الأبيض" : "مرحلة الحركة: دور الأسود";
+    }
 }
 
 function checkWin(player) {
@@ -103,13 +156,23 @@ function checkWin(player) {
     });
 }
 
+function endGame(player) {
+    const winnerName = player === 1 ? 'اللاعب الأول (الأبيض)' : 'اللاعب الثاني (الأسود)';
+    winnerText.innerText = `🎉 فاز ${winnerName}!`;
+    winModal.style.display = 'flex';
+    isGameActive = false;
+    createBoard();
+}
+
 function resetGame() {
     boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     currentPlayer = 1;
     isGameActive = true;
-    totalMoves = 0;
-    statusElement.innerText = "دور اللاعب الأول (الأبيض)";
-    winModal.style.display = 'none'; // إخفاء النافذة عند إعادة اللعبة
+    selectedPieceIndex = null;
+    whitePiecesPlaced = 0;
+    blackPiecesPlaced = 0;
+    statusElement.innerText = "مرحلة الوضع: دور الأبيض";
+    winModal.style.display = 'none';
     createBoard();
 }
 
