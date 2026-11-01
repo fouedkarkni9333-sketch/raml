@@ -29,7 +29,7 @@ const translations = {
         p2Turn: "دور (الأسود)",
         botTurn: "دور الروبوت (الأسود)",
         winMsg: "مبروك الفوز!",
-        nextMatchBtn: "المباراة النهائية",
+        nextMatchBtn: "المباراة التالية",
         playAgainBtn: "اللعب من جديد",
         champMsg: "هو البطل النهائي للعبة الرمل!",
         stageSemi1: "المباراة الأولى: اللاعب 1 ضد اللاعب 2",
@@ -49,7 +49,7 @@ const translations = {
         p2Turn: "Tour (Noir)",
         botTurn: "Tour du Bot (Noir)",
         winMsg: "Félicitations!",
-        nextMatchBtn: "Grande Finale",
+        nextMatchBtn: "Match Suivant",
         playAgainBtn: "Rejouer",
         champMsg: "est le Grand Champion de RAML!",
         stageSemi1: "Match 1: Joueur 1 vs Joueur 2",
@@ -133,8 +133,8 @@ function setupTournamentStage() {
             isBotGame = true;
             document.getElementById('tournament-info').innerText = t.stageSemi2;
         } else if (currentStage === 3) {
-            p1Name = matchWinners[1] || "Player 1";
-            p2Name = matchWinners[2] || "Bot";
+            p1Name = matchWinners[1] || (currentLang === 'ar' ? "اللاعب 1" : "Player 1");
+            p2Name = matchWinners[2] || (currentLang === 'ar' ? "الروبوت" : "Bot");
             document.getElementById('tournament-info').innerText = t.stageFinal + `${p1Name} vs ${p2Name}`;
         }
     } else if (gameMode === 4) {
@@ -147,8 +147,8 @@ function setupTournamentStage() {
             p2Name = currentLang === 'ar' ? "اللاعب 4" : "Player 4";
             document.getElementById('tournament-info').innerText = t.stageSemi4_2;
         } else if (currentStage === 3) {
-            p1Name = matchWinners[1] || "Player 1";
-            p2Name = matchWinners[2] || "Player 3";
+            p1Name = matchWinners[1] || (currentLang === 'ar' ? "اللاعب 1" : "Player 1");
+            p2Name = matchWinners[2] || (currentLang === 'ar' ? "اللاعب 3" : "Player 3");
             document.getElementById('tournament-info').innerText = t.stageFinal + `${p1Name} vs ${p2Name}`;
         }
     }
@@ -201,7 +201,7 @@ function handlePointClick(index) {
             switchTurn();
         }
     } 
-    // Phase 2: Moving pieces anywhere freely to any empty spot!
+    // Phase 2: Moving pieces freely to any empty spot
     else {
         if (selectedPoint === null) {
             if (boardState[index] === currentPlayer) {
@@ -209,9 +209,8 @@ function handlePointClick(index) {
             }
         } else {
             if (index === selectedPoint) {
-                selectedPoint = null; // Deselect
+                selectedPoint = null;
             } else if (boardState[index] === null) {
-                // Move piece freely to any empty point on the board
                 boardState[selectedPoint] = null;
                 boardState[index] = currentPlayer;
                 selectedPoint = null;
@@ -221,7 +220,7 @@ function handlePointClick(index) {
                 }
                 switchTurn();
             } else if (boardState[index] === currentPlayer) {
-                selectedPoint = index; // Change selection to another piece
+                selectedPoint = index;
             }
         }
     }
@@ -331,21 +330,28 @@ function endMatch(winner) {
 
 function nextTournamentStep() {
     document.getElementById('win-modal').style.display = 'none';
-    if (gameMode === 2 || currentStage === 3) {
+    
+    if (gameMode === 2) {
         resetFullGame();
     } else if (gameMode === 3) {
         if (currentStage === 1) {
-            currentStage = 2;
+            currentStage = 2; // الانتقال للمباراة الثانية (اللاعب 3 ضد الروبوت)
+            setupTournamentStage();
         } else if (currentStage === 2) {
-            currentStage = 3;
+            currentStage = 3; // الانتقال للنهائي الكبير بين الفائزين
+            setupTournamentStage();
+        } else if (currentStage === 3) {
+            resetFullGame(); // إعادة البطولة من جديد بعد انتهاء النهائي
         }
-        setupTournamentStage();
     } else if (gameMode === 4) {
         if (currentStage === 1) {
-            currentStage = 2;
+            currentStage = 2; // الانتقال لنصف النهائي الثاني (اللاعب 3 ضد اللاعب 4)
+            setupTournamentStage();
         } else if (currentStage === 2) {
-            currentStage = 3;
+            currentStage = 3; // الانتقال للنهائي الكبير بين الفائزين
+            setupTournamentStage();
+        } else if (currentStage === 3) {
+            resetFullGame(); // إعادة البطولة من جديد بعد انتهاء النهائي
         }
-        setupTournamentStage();
     }
 }
