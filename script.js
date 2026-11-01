@@ -1,4 +1,3 @@
-// --- Translations Dictionary ---
 const translations = {
     en: {
         title: "RAML",
@@ -28,10 +27,10 @@ const translations = {
         mode4: "4 لاعبين",
         reset: "إعادة اللعبة",
         p1Turn: "دور اللاعب 1 (الأبيض)",
-        p2Turn: "دور اللاعب 2 (أسود)",
+        p2Turn: "دور اللاعب 2 (الأسود)",
         p3Turn: "دور اللاعب 3 (الأبيض)",
-        p4Turn: "دور اللاعب 4 (أسود)",
-        botTurn: "دور الروبوت (أسود)",
+        p4Turn: "دور اللاعب 4 (الأسود)",
+        botTurn: "دور الروبوت (الأسود)",
         winMsg: "مبروك الفوز!",
         nextMatchBtn: "المباراة التالية",
         playAgainBtn: "اللعب من جديد",
@@ -68,9 +67,9 @@ const translations = {
 let currentLang = 'en';
 
 const WINNING_COMBOS = [
-    [0,1,2], [3,4,5], [6,7,8], // Rows
-    [0,3,6], [1,4,7], [2,5,8], // Columns
-    [0,4,8], [2,4,6]          // Diagonals
+    [0,1,2], [3,4,5], [6,7,8], 
+    [0,3,6], [1,4,7], [2,5,8], 
+    [0,4,8], [2,4,6]          
 ];
 
 const ADJACENCY = {
@@ -99,7 +98,6 @@ let isBotGame = false;
 
 window.onload = () => {
     updateLanguage();
-    initGame();
 };
 
 function changeLanguage(lang) {
@@ -115,7 +113,7 @@ function updateLanguage() {
     document.getElementById('mode-3-btn').innerText = t.mode3;
     document.getElementById('mode-4-btn').innerText = t.mode4;
     document.getElementById('reset-btn').innerText = t.reset;
-    updateStatusText();
+    setupTournamentStage();
 }
 
 function setMode(mode) {
@@ -141,12 +139,12 @@ function setupTournamentStage() {
         document.getElementById('tournament-info').innerText = "";
     } else if (gameMode === 3) {
         if (currentStage === 1) {
-            p1Name = "Player 1";
-            p2Name = "Player 2";
+            p1Name = currentLang === 'ar' ? "اللاعب 1" : "Player 1";
+            p2Name = currentLang === 'ar' ? "اللاعب 2" : "Player 2";
             document.getElementById('tournament-info').innerText = t.stageSemi1;
         } else if (currentStage === 2) {
-            p1Name = "Player 3";
-            p2Name = "Bot";
+            p1Name = currentLang === 'ar' ? "اللاعب 3" : "Player 3";
+            p2Name = currentLang === 'ar' ? "الروبوت" : "Bot";
             isBotGame = true;
             document.getElementById('tournament-info').innerText = t.stageSideBot;
         } else if (currentStage === 3) {
@@ -156,12 +154,12 @@ function setupTournamentStage() {
         }
     } else if (gameMode === 4) {
         if (currentStage === 1) {
-            p1Name = "Player 1";
-            p2Name = "Player 2";
+            p1Name = currentLang === 'ar' ? "اللاعب 1" : "Player 1";
+            p2Name = currentLang === 'ar' ? "اللاعب 2" : "Player 2";
             document.getElementById('tournament-info').innerText = t.stageSemi1;
         } else if (currentStage === 2) {
-            p1Name = "Player 3";
-            p2Name = "Player 4";
+            p1Name = currentLang === 'ar' ? "اللاعب 3" : "Player 3";
+            p2Name = currentLang === 'ar' ? "اللاعب 4" : "Player 4";
             document.getElementById('tournament-info').innerText = t.stageSemi2;
         } else if (currentStage === 3) {
             p1Name = matchWinners[1];
@@ -357,5 +355,3 @@ function nextTournamentStep() {
         setupTournamentStage();
     }
 }
-
-function initGame() {}
