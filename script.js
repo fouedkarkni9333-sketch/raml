@@ -5,19 +5,18 @@ const translations = {
         mode3: "3 Players",
         mode4: "4 Players",
         reset: "Reset Game",
-        p1Turn: "Player 1's Turn (White)",
-        p2Turn: "Player 2's Turn (Black)",
-        p3Turn: "Player 3's Turn (White)",
-        p4Turn: "Player 4's Turn (Black)",
+        p1Turn: "Turn (White)",
+        p2Turn: "Turn (Black)",
         botTurn: "Bot's Turn (Black)",
         winMsg: "Congratulations!",
-        nextMatchBtn: "Next Match",
+        nextMatchBtn: "Next Match / Final",
         playAgainBtn: "Play Again",
         champMsg: "is the Grand Champion of RAML!",
-        stageSemi1: "Semi-Final 1: Player 1 vs Player 2",
-        stageSemi2: "Semi-Final 2: Player 3 vs Player 4",
-        stageSideBot: "Side Match: Player 3 vs Bot",
-        stageFinal: "Final Match: ",
+        stageSemi1: "Match 1: Player 1 vs Player 2",
+        stageSemi2: "Match 2: Player 3 vs Bot (AI)",
+        stageSemi4_1: "Semi-Final 1: Player 1 vs Player 2",
+        stageSemi4_2: "Semi-Final 2: Player 3 vs Player 4",
+        stageFinal: "Grand Final: ",
         winner: "Winner:"
     },
     ar: {
@@ -26,19 +25,18 @@ const translations = {
         mode3: "3 لاعبين",
         mode4: "4 لاعبين",
         reset: "إعادة اللعبة",
-        p1Turn: "دور اللاعب 1 (الأبيض)",
-        p2Turn: "دور اللاعب 2 (الأسود)",
-        p3Turn: "دور اللاعب 3 (الأبيض)",
-        p4Turn: "دور اللاعب 4 (الأسود)",
+        p1Turn: "دور (الأبيض)",
+        p2Turn: "دور (الأسود)",
         botTurn: "دور الروبوت (الأسود)",
         winMsg: "مبروك الفوز!",
-        nextMatchBtn: "المباراة التالية",
+        nextMatchBtn: "المباراة النهائية",
         playAgainBtn: "اللعب من جديد",
-        champMsg: "هو الفائز النهائي بالبطولة!",
-        stageSemi1: "نصف النهائي 1: اللاعب 1 ضد اللاعب 2",
-        stageSemi2: "نصف النهائي 2: اللاعب 3 ضد اللاعب 4",
-        stageSideBot: "مباراة جانبية: اللاعب 3 ضد الروبوت",
-        stageFinal: "المباراة النهائية: ",
+        champMsg: "هو البطل النهائي للعبة الرمل!",
+        stageSemi1: "المباراة الأولى: اللاعب 1 ضد اللاعب 2",
+        stageSemi2: "المباراة الثانية: اللاعب 3 ضد الروبوت",
+        stageSemi4_1: "نصف النهائي 1: اللاعب 1 ضد اللاعب 2",
+        stageSemi4_2: "نصف النهائي 2: اللاعب 3 ضد اللاعب 4",
+        stageFinal: "النهائي الكبير: ",
         winner: "الفائز:"
     },
     fr: {
@@ -47,18 +45,17 @@ const translations = {
         mode3: "3 Joueurs",
         mode4: "4 Joueurs",
         reset: "Réinitialiser",
-        p1Turn: "Tour du Joueur 1 (Blanc)",
-        p2Turn: "Tour du Joueur 2 (Noir)",
-        p3Turn: "Tour du Joueur 3 (Blanc)",
-        p4Turn: "Tour du Joueur 4 (Noir)",
+        p1Turn: "Tour (Blanc)",
+        p2Turn: "Tour (Noir)",
         botTurn: "Tour du Bot (Noir)",
         winMsg: "Félicitations!",
-        nextMatchBtn: "Match Suivant",
+        nextMatchBtn: "Grande Finale",
         playAgainBtn: "Rejouer",
         champMsg: "est le Grand Champion de RAML!",
-        stageSemi1: "Demi-finale 1: Joueur 1 vs Joueur 2",
-        stageSemi2: "Demi-finale 2: Joueur 3 vs Joueur 4",
-        stageSideBot: "Match Parallèle: Joueur 3 vs Bot",
+        stageSemi1: "Match 1: Joueur 1 vs Joueur 2",
+        stageSemi2: "Match 2: Joueur 3 vs Bot",
+        stageSemi4_1: "Demi-finale 1: Joueur 1 vs Joueur 2",
+        stageSemi4_2: "Demi-finale 2: Joueur 3 vs Joueur 4",
         stageFinal: "Grande Finale: ",
         winner: "Gagnant:"
     }
@@ -71,18 +68,6 @@ const WINNING_COMBOS = [
     [0,3,6], [1,4,7], [2,5,8], 
     [0,4,8], [2,4,6]          
 ];
-
-const ADJACENCY = {
-    0: [1, 3, 4],
-    1: [0, 2, 4],
-    2: [1, 5, 4],
-    3: [0, 6, 4],
-    4: [0, 1, 2, 3, 5, 6, 7, 8],
-    5: [2, 8, 4],
-    6: [3, 7, 4],
-    7: [6, 8, 4],
-    8: [5, 7, 4]
-};
 
 let boardState = Array(9).fill(null);
 let currentPlayer = 1; 
@@ -146,24 +131,24 @@ function setupTournamentStage() {
             p1Name = currentLang === 'ar' ? "اللاعب 3" : "Player 3";
             p2Name = currentLang === 'ar' ? "الروبوت" : "Bot";
             isBotGame = true;
-            document.getElementById('tournament-info').innerText = t.stageSideBot;
+            document.getElementById('tournament-info').innerText = t.stageSemi2;
         } else if (currentStage === 3) {
-            p1Name = matchWinners[1];
-            p2Name = matchWinners[2];
+            p1Name = matchWinners[1] || "Player 1";
+            p2Name = matchWinners[2] || "Bot";
             document.getElementById('tournament-info').innerText = t.stageFinal + `${p1Name} vs ${p2Name}`;
         }
     } else if (gameMode === 4) {
         if (currentStage === 1) {
             p1Name = currentLang === 'ar' ? "اللاعب 1" : "Player 1";
             p2Name = currentLang === 'ar' ? "اللاعب 2" : "Player 2";
-            document.getElementById('tournament-info').innerText = t.stageSemi1;
+            document.getElementById('tournament-info').innerText = t.stageSemi4_1;
         } else if (currentStage === 2) {
             p1Name = currentLang === 'ar' ? "اللاعب 3" : "Player 3";
             p2Name = currentLang === 'ar' ? "اللاعب 4" : "Player 4";
-            document.getElementById('tournament-info').innerText = t.stageSemi2;
+            document.getElementById('tournament-info').innerText = t.stageSemi4_2;
         } else if (currentStage === 3) {
-            p1Name = matchWinners[1];
-            p2Name = matchWinners[2];
+            p1Name = matchWinners[1] || "Player 1";
+            p2Name = matchWinners[2] || "Player 3";
             document.getElementById('tournament-info').innerText = t.stageFinal + `${p1Name} vs ${p2Name}`;
         }
     }
@@ -185,9 +170,9 @@ function updateStatusText() {
     const t = translations[currentLang];
     const status = document.getElementById('game-status');
     if (isBotGame && currentPlayer === 2) {
-        status.innerText = t.botTurn;
+        status.innerText = `${p2Name} - ${t.botTurn}`;
     } else {
-        status.innerText = currentPlayer === 1 ? `${p1Name} (${currentLang === 'ar' ? 'أبيض' : 'White'})` : `${p2Name} (${currentLang === 'ar' ? 'أسود' : 'Black'})`;
+        status.innerText = currentPlayer === 1 ? `${p1Name} : ${t.p1Turn}` : `${p2Name} : ${t.p2Turn}`;
     }
 }
 
@@ -216,7 +201,7 @@ function handlePointClick(index) {
             switchTurn();
         }
     } 
-    // Phase 2: Moving pieces smoothly
+    // Phase 2: Moving pieces anywhere freely to any empty spot!
     else {
         if (selectedPoint === null) {
             if (boardState[index] === currentPlayer) {
@@ -224,8 +209,9 @@ function handlePointClick(index) {
             }
         } else {
             if (index === selectedPoint) {
-                selectedPoint = null;
-            } else if (boardState[index] === null && ADJACENCY[selectedPoint].includes(index)) {
+                selectedPoint = null; // Deselect
+            } else if (boardState[index] === null) {
+                // Move piece freely to any empty point on the board
                 boardState[selectedPoint] = null;
                 boardState[index] = currentPlayer;
                 selectedPoint = null;
@@ -235,7 +221,7 @@ function handlePointClick(index) {
                 }
                 switchTurn();
             } else if (boardState[index] === currentPlayer) {
-                selectedPoint = index;
+                selectedPoint = index; // Change selection to another piece
             }
         }
     }
@@ -298,7 +284,7 @@ function getBestPlacementIndex() {
 function getBestMovementMove() {
     let myPieces = boardState.map((val, idx) => val === 2 ? idx : null).filter(val => val !== null);
     for (let from of myPieces) {
-        for (let to of ADJACENCY[from]) {
+        for (let to = 0; to < 9; to++) {
             if (boardState[to] === null) {
                 boardState[from] = null; boardState[to] = 2;
                 let win = checkWin(2);
@@ -307,13 +293,13 @@ function getBestMovementMove() {
             }
         }
     }
-    let validMoves = [];
-    for (let from of myPieces) {
-        for (let to of ADJACENCY[from]) {
-            if (boardState[to] === null) validMoves.push({ from, to });
-        }
+    let validEmpties = boardState.map((val, idx) => val === null ? idx : null).filter(val => val !== null);
+    if (myPieces.length > 0 && validEmpties.length > 0) {
+        let from = myPieces[Math.floor(Math.random() * myPieces.length)];
+        let to = validEmpties[Math.floor(Math.random() * validEmpties.length)];
+        return { from, to };
     }
-    return validMoves.length > 0 ? validMoves[Math.floor(Math.random() * validMoves.length)] : null;
+    return null;
 }
 
 function checkWin(player) {
@@ -333,15 +319,12 @@ function endMatch(winner) {
 
     winnerText.innerText = `${t.winMsg} 🎉`;
 
-    if (gameMode === 2) {
+    if (gameMode === 2 || currentStage === 3) {
         winnerSubtext.innerText = `${winnerName} ${t.champMsg}`;
         nextBtn.innerText = t.playAgainBtn;
-    } else if (currentStage < 3) {
-        winnerSubtext.innerText = `${t.winner} ${winnerName}`;
-        nextBtn.innerText = t.nextMatchBtn;
     } else {
-        winnerSubtext.innerText = `🏆 ${winnerName} ${t.champMsg}`;
-        nextBtn.innerText = t.playAgainBtn;
+        winnerSubtext.innerText = `${t.winner} ${winnerName} - التأهل للنهائي!`;
+        nextBtn.innerText = t.nextMatchBtn;
     }
     modal.style.display = 'flex';
 }
@@ -350,8 +333,19 @@ function nextTournamentStep() {
     document.getElementById('win-modal').style.display = 'none';
     if (gameMode === 2 || currentStage === 3) {
         resetFullGame();
-    } else {
-        currentStage++;
+    } else if (gameMode === 3) {
+        if (currentStage === 1) {
+            currentStage = 2;
+        } else if (currentStage === 2) {
+            currentStage = 3;
+        }
+        setupTournamentStage();
+    } else if (gameMode === 4) {
+        if (currentStage === 1) {
+            currentStage = 2;
+        } else if (currentStage === 2) {
+            currentStage = 3;
+        }
         setupTournamentStage();
     }
 }
