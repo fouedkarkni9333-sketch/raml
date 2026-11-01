@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAML - Premium Desert Game</title>
+    <title>RAML - Split Screen Desert Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -28,32 +28,64 @@
             <button class="mode-btn" onclick="setMode(4)" id="mode-4-btn">4 Players</button>
         </div>
 
-        <!-- Match Info & Tournament Status -->
+        <!-- Global Status / Info -->
         <div id="tournament-info" class="tournament-info"></div>
-        <p id="game-status">Player 1's Turn (White)</p>
 
-        <!-- Professional Board -->
-        <div class="board" id="board">
-            <svg class="board-lines" viewBox="0 0 340 340">
-                <line x1="35" y1="35" x2="305" y2="35" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                <line x1="35" y1="170" x2="305" y2="170" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                <line x1="35" y1="305" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                <line x1="35" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                <line x1="170" y1="35" x2="170" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                <line x1="305" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                <line x1="35" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                <line x1="305" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-            </svg>
-            <!-- 9 Points -->
-            <div class="point" data-index="0" style="top: 10.3%; left: 10.3%;" onclick="handlePointClick(0)"></div>
-            <div class="point" data-index="1" style="top: 10.3%; left: 50%;" onclick="handlePointClick(1)"></div>
-            <div class="point" data-index="2" style="top: 10.3%; left: 89.7%;" onclick="handlePointClick(2)"></div>
-            <div class="point" data-index="3" style="top: 50%; left: 10.3%;" onclick="handlePointClick(3)"></div>
-            <div class="point" data-index="4" style="top: 50%; left: 50%;" onclick="handlePointClick(4)"></div>
-            <div class="point" data-index="5" style="top: 50%; left: 89.7%;" onclick="handlePointClick(5)"></div>
-            <div class="point" data-index="6" style="top: 89.7%; left: 10.3%;" onclick="handlePointClick(6)"></div>
-            <div class="point" data-index="7" style="top: 89.7%; left: 50%;" onclick="handlePointClick(7)"></div>
-            <div class="point" data-index="8" style="top: 89.7%; left: 89.7%;" onclick="handlePointClick(8)"></div>
+        <!-- Boards Wrapper (Supports Single or Split Screen) -->
+        <div id="boards-wrapper" class="boards-wrapper single-board-mode">
+            
+            <!-- BOARD 1 -->
+            <div class="board-pane" id="pane-1">
+                <p id="game-status-1" class="pane-status">Player 1 : Turn (White)</p>
+                <div class="board" id="board-1">
+                    <svg class="board-lines" viewBox="0 0 340 340">
+                        <line x1="35" y1="35" x2="305" y2="35" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="170" x2="305" y2="170" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="305" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="170" y1="35" x2="170" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="305" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="305" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                    </svg>
+                    <div class="point" data-board="1" data-index="0" style="top: 10.3%; left: 10.3%;" onclick="handlePointClick(1, 0)"></div>
+                    <div class="point" data-board="1" data-index="1" style="top: 10.3%; left: 50%;" onclick="handlePointClick(1, 1)"></div>
+                    <div class="point" data-board="1" data-index="2" style="top: 10.3%; left: 89.7%;" onclick="handlePointClick(1, 2)"></div>
+                    <div class="point" data-board="1" data-index="3" style="top: 50%; left: 10.3%;" onclick="handlePointClick(1, 3)"></div>
+                    <div class="point" data-board="1" data-index="4" style="top: 50%; left: 50%;" onclick="handlePointClick(1, 4)"></div>
+                    <div class="point" data-board="1" data-index="5" style="top: 50%; left: 89.7%;" onclick="handlePointClick(1, 5)"></div>
+                    <div class="point" data-board="1" data-index="6" style="top: 89.7%; left: 10.3%;" onclick="handlePointClick(1, 6)"></div>
+                    <div class="point" data-board="1" data-index="7" style="top: 89.7%; left: 50%;" onclick="handlePointClick(1, 7)"></div>
+                    <div class="point" data-board="1" data-index="8" style="top: 89.7%; left: 89.7%;" onclick="handlePointClick(1, 8)"></div>
+                </div>
+            </div>
+
+            <!-- BOARD 2 (For Split Screen Mode) -->
+            <div class="board-pane" id="pane-2" style="display: none;">
+                <p id="game-status-2" class="pane-status">Player 3 : Turn (White)</p>
+                <div class="board" id="board-2">
+                    <svg class="board-lines" viewBox="0 0 340 340">
+                        <line x1="35" y1="35" x2="305" y2="35" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="170" x2="305" y2="170" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="305" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="170" y1="35" x2="170" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="305" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="305" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                    </svg>
+                    <div class="point" data-board="2" data-index="0" style="top: 10.3%; left: 10.3%;" onclick="handlePointClick(2, 0)"></div>
+                    <div class="point" data-board="2" data-index="1" style="top: 10.3%; left: 50%;" onclick="handlePointClick(2, 1)"></div>
+                    <div class="point" data-board="2" data-index="2" style="top: 10.3%; left: 89.7%;" onclick="handlePointClick(2, 2)"></div>
+                    <div class="point" data-board="2" data-index="3" style="top: 50%; left: 10.3%;" onclick="handlePointClick(2, 3)"></div>
+                    <div class="point" data-board="2" data-index="4" style="top: 50%; left: 50%;" onclick="handlePointClick(2, 4)"></div>
+                    <div class="point" data-board="2" data-index="5" style="top: 50%; left: 89.7%;" onclick="handlePointClick(2, 5)"></div>
+                    <div class="point" data-board="2" data-index="6" style="top: 89.7%; left: 10.3%;" onclick="handlePointClick(2, 6)"></div>
+                    <div class="point" data-board="2" data-index="7" style="top: 89.7%; left: 50%;" onclick="handlePointClick(2, 7)"></div>
+                    <div class="point" data-board="2" data-index="8" style="top: 89.7%; left: 89.7%;" onclick="handlePointClick(2, 8)"></div>
+                </div>
+            </div>
+
         </div>
 
         <button id="reset-btn" onclick="resetFullGame()">Reset Game</button>
@@ -65,7 +97,7 @@
             <div class="trophy-icon">🏆</div>
             <h2 id="winner-text">Congratulations!</h2>
             <p id="winner-subtext">Match finished successfully.</p>
-            <button id="modal-next-btn" onclick="nextTournamentStep()">Next Match</button>
+            <button id="modal-next-btn" onclick="nextTournamentStep()">Next Match / Final</button>
         </div>
     </div>
 
