@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAML - Desert Game</title>
+    <title>RAML - Premium Desert Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <!-- Language Switcher -->
+        <!-- Header Controls -->
         <div class="header-controls">
             <div class="lang-selector">
                 <select id="lang-select" onchange="changeLanguage(this.value)">
@@ -32,28 +32,28 @@
         <div id="tournament-info" class="tournament-info"></div>
         <p id="game-status">Player 1's Turn (White)</p>
 
-        <!-- Larger Board -->
+        <!-- Professional Board -->
         <div class="board" id="board">
             <svg class="board-lines" viewBox="0 0 340 340">
-                <line x1="35" y1="35" x2="305" y2="35" stroke="#4a3319" stroke-width="5"/>
-                <line x1="35" y1="170" x2="305" y2="170" stroke="#4a3319" stroke-width="5"/>
-                <line x1="35" y1="305" x2="305" y2="305" stroke="#4a3319" stroke-width="5"/>
-                <line x1="35" y1="35" x2="35" y2="305" stroke="#4a3319" stroke-width="5"/>
-                <line x1="170" y1="35" x2="170" y2="305" stroke="#4a3319" stroke-width="5"/>
-                <line x1="305" y1="35" x2="305" y2="305" stroke="#4a3319" stroke-width="5"/>
-                <line x1="35" y1="35" x2="305" y2="305" stroke="#4a3319" stroke-width="5"/>
-                <line x1="305" y1="35" x2="35" y2="305" stroke="#4a3319" stroke-width="5"/>
+                <line x1="35" y1="35" x2="305" y2="35" stroke="#d4af37" stroke-opacity="0.4" stroke-width="4"/>
+                <line x1="35" y1="170" x2="305" y2="170" stroke="#d4af37" stroke-opacity="0.4" stroke-width="4"/>
+                <line x1="35" y1="305" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.4" stroke-width="4"/>
+                <line x1="35" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.4" stroke-width="4"/>
+                <line x1="170" y1="35" x2="170" y2="305" stroke="#d4af37" stroke-opacity="0.4" stroke-width="4"/>
+                <line x1="305" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.4" stroke-width="4"/>
+                <line x1="35" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.4" stroke-width="4"/>
+                <line x1="305" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.4" stroke-width="4"/>
             </svg>
-            <!-- 9 Intersection Points -->
-            <div class="point" data-index="0" style="top: 35px; left: 35px;" onclick="handlePointClick(0)"></div>
-            <div class="point" data-index="1" style="top: 35px; left: 170px;" onclick="handlePointClick(1)"></div>
-            <div class="point" data-index="2" style="top: 35px; left: 305px;" onclick="handlePointClick(2)"></div>
-            <div class="point" data-index="3" style="top: 170px; left: 35px;" onclick="handlePointClick(3)"></div>
-            <div class="point" data-index="4" style="top: 170px; left: 170px;" onclick="handlePointClick(4)"></div>
-            <div class="point" data-index="5" style="top: 170px; left: 305px;" onclick="handlePointClick(5)"></div>
-            <div class="point" data-index="6" style="top: 305px; left: 35px;" onclick="handlePointClick(6)"></div>
-            <div class="point" data-index="7" style="top: 305px; left: 170px;" onclick="handlePointClick(7)"></div>
-            <div class="point" data-index="8" style="top: 305px; left: 305px;" onclick="handlePointClick(8)"></div>
+            <!-- 9 Points -->
+            <div class="point" data-index="0" style="top: 10.3%; left: 10.3%;" onclick="handlePointClick(0)"></div>
+            <div class="point" data-index="1" style="top: 10.3%; left: 50%;" onclick="handlePointClick(1)"></div>
+            <div class="point" data-index="2" style="top: 10.3%; left: 89.7%;" onclick="handlePointClick(2)"></div>
+            <div class="point" data-index="3" style="top: 50%; left: 10.3%;" onclick="handlePointClick(3)"></div>
+            <div class="point" data-index="4" style="top: 50%; left: 50%;" onclick="handlePointClick(4)"></div>
+            <div class="point" data-index="5" style="top: 50%; left: 89.7%;" onclick="handlePointClick(5)"></div>
+            <div class="point" data-index="6" style="top: 89.7%; left: 10.3%;" onclick="handlePointClick(6)"></div>
+            <div class="point" data-index="7" style="top: 89.7%; left: 50%;" onclick="handlePointClick(7)"></div>
+            <div class="point" data-index="8" style="top: 89.7%; left: 89.7%;" onclick="handlePointClick(8)"></div>
         </div>
 
         <button id="reset-btn" onclick="resetFullGame()">Reset Game</button>
