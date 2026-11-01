@@ -19,11 +19,11 @@ body {
     background: linear-gradient(145deg, #26201c, #1f1915);
     padding: 18px;
     border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
     text-align: center;
-    max-width: 440px;
+    max-width: 460px;
     width: 100%;
-    border: 2px solid rgba(212, 175, 55, 0.3);
+    border: 2px solid rgba(212, 175, 55, 0.4);
 }
 
 .header-controls {
@@ -35,7 +35,7 @@ body {
 .lang-selector select {
     background: #14110f;
     color: #d4af37;
-    border: 1px solid rgba(212, 175, 55, 0.4);
+    border: 1px solid rgba(212, 175, 55, 0.5);
     padding: 6px 14px;
     border-radius: 8px;
     cursor: pointer;
@@ -79,72 +79,58 @@ h1 {
 }
 
 .tournament-info {
-    font-size: 12px;
+    font-size: 13px;
     color: #f4a261;
-    margin-bottom: 6px;
-    min-height: 16px;
+    margin-bottom: 8px;
     font-weight: 600;
 }
 
-#game-status {
-    font-size: 15px;
-    margin-bottom: 12px;
-    font-weight: 700;
-    color: #fff;
-}
-
-/* Split Screen Adjustments */
+/* Split Screen Panes Styling */
 .boards-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    gap: 15px;
     width: 100%;
+    align-items: center;
 }
 
-.boards-wrapper.split-board-mode {
-    gap: 5px;
+.board-pane {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 16px;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.boards-wrapper.split-board-mode .board {
-    width: 250px;
-    height: 250px;
-    margin: 0 auto 10px auto;
-}
-
-.boards-wrapper.split-board-mode .point {
-    width: 36px;
-    height: 36px;
-}
-
-.boards-wrapper.split-board-mode .point.p1::after {
-    width: 26px;
-    height: 26px;
-}
-
-.boards-wrapper.split-board-mode .point.p2::after {
-    width: 26px;
-    height: 26px;
+.pane-header {
+    font-size: 12px;
+    font-weight: 800;
+    color: #d4af37;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
 }
 
 .pane-status {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
-    color: #f4a261;
-    margin-bottom: 3px;
-    text-align: center;
+    color: #fff;
+    margin-bottom: 8px;
 }
 
-/* Single Board Design */
+/* Board Design */
 .board {
     position: relative;
-    width: 330px;
-    height: 330px;
+    width: 280px;
+    height: 280px;
     background: radial-gradient(circle at center, #362c24, #1f1915);
-    margin: 0 auto 15px auto;
-    border-radius: 20px;
-    border: 4px solid #d4af37;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    margin: 0 auto;
+    border-radius: 16px;
+    border: 3px solid #d4af37;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
 }
 
 .board-lines {
@@ -158,8 +144,8 @@ h1 {
 
 .point {
     position: absolute;
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     background: #221c18;
     border: 2px solid rgba(212, 175, 55, 0.6);
     border-radius: 50%;
@@ -176,23 +162,23 @@ h1 {
 
 .point.selected {
     border-color: #00ffcc;
-    box-shadow: 0 0 18px #00ffcc;
+    box-shadow: 0 0 15px #00ffcc;
     transform: translate(-50%, -50%) scale(1.15);
     background: #2e2621;
 }
 
-/* High-Contrast Pieces */
+/* High-Contrast 3D Pieces */
 .point.p1::after {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 32px;
-    height: 32px;
-    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 100%);
+    width: 26px;
+    height: 26px;
+    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 100%);
     border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.8);
     border: 2px solid #888;
 }
 
@@ -202,15 +188,15 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     background: radial-gradient(circle at 35% 35%, #444 0%, #000000 100%);
     border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.9);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.9);
     border: 2px solid #f4a261;
 }
 
-#reset-btn, .modal-content button {
+#reset-btn {
     background: linear-gradient(135deg, #d4af37, #aa8c2c);
     color: #14110f;
     border: none;
@@ -220,10 +206,11 @@ h1 {
     cursor: pointer;
     font-weight: 700;
     box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+    margin-top: 15px;
     transition: all 0.3s ease;
 }
 
-#reset-btn:hover, .modal-content button:hover {
+#reset-btn:hover {
     background: linear-gradient(135deg, #e5c158, #d4af37);
     transform: translateY(-2px);
 }
@@ -266,4 +253,15 @@ h1 {
     margin-bottom: 20px;
     color: #f3e9dc;
     font-size: 14px;
+}
+
+.modal-content button {
+    background: linear-gradient(135deg, #d4af37, #aa8c2c);
+    color: #14110f;
+    border: none;
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
 }
