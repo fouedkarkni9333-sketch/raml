@@ -12,8 +12,8 @@ const translations = {
         nextMatchBtn: "Start Grand Final!",
         playAgainBtn: "Play Again",
         champMsg: "is the Grand Champion of RAML!",
-        splitNotice3: "Split Screen: P1 vs P2 (Top) | P3 vs Bot (Bottom)",
-        splitNotice4: "Split Screen: P1 vs P2 (Top) | P3 vs P4 (Bottom)",
+        splitNotice3: "Split Screen: P1 vs P2 & P3 vs Bot",
+        splitNotice4: "Split Screen: P1 vs P2 & P3 vs P4",
         finalNotice: "Grand Final Match",
         winner: "Winner:"
     },
@@ -30,8 +30,8 @@ const translations = {
         nextMatchBtn: "ابدأ النهائي الكبير!",
         playAgainBtn: "اللعب من جديد",
         champMsg: "هو البطل النهائي للعبة الرمل!",
-        splitNotice3: "شاشة مقسمة: (اللاعب 1 ضد 2) أعلى | (اللاعب 3 ضد الروبوت) أسفل",
-        splitNotice4: "شاشة مقسمة: (اللاعب 1 ضد 2) أعلى | (اللاعب 3 ضد 4) أسفل",
+        splitNotice3: "شاشة مقسمة: (لاعب 1 ضد 2) و (لاعب 3 ضد الروبوت)",
+        splitNotice4: "شاشة مقسمة: (لاعب 1 ضد 2) و (لاعب 3 ضد 4)",
         finalNotice: "مباراة النهائي الكبير",
         winner: "الفائز:"
     },
@@ -48,8 +48,8 @@ const translations = {
         nextMatchBtn: "Grande Finale!",
         playAgainBtn: "Rejouer",
         champMsg: "est le Grand Champion de RAML!",
-        splitNotice3: "Écran partagé: P1 vs P2 (Haut) | P3 vs Bot (Bas)",
-        splitNotice4: "Écran partagé: P1 vs P2 (Haut) | P3 vs P4 (Bas)",
+        splitNotice3: "Écran partagé: P1 vs P2 & P3 vs Bot",
+        splitNotice4: "Écran partagé: P1 vs P2 & P3 vs P4",
         finalNotice: "Grande Finale",
         winner: "Gagnant:"
     }
@@ -63,9 +63,8 @@ const WINNING_COMBOS = [
     [0,4,8], [2,4,6]          
 ];
 
-// حالات الرقعتين (Board 1 و Board 2)
-let gameMode = 2; // 2, 3, or 4
-let isFinalStage = false; // هل وصلنا للنهائي الموحد؟
+let gameMode = 2;
+let isFinalStage = false;
 
 let boards = {
     1: {
@@ -128,7 +127,6 @@ function setupGameMode() {
     const pane2 = document.getElementById('pane-2');
     const info = document.getElementById('tournament-info');
 
-    // إعداد أسماء اللاعبين حسب الأوضاع
     if (gameMode === 2) {
         wrapper.className = "boards-wrapper single-board-mode";
         pane2.style.display = "none";
@@ -155,13 +153,12 @@ function setupGameMode() {
             boards[2].isBot = true;
             resetBoard(2);
         } else {
-            // مرحلة النهائي المشترك بين رابح رقعة 1 ورابح رقعة 2
             wrapper.className = "boards-wrapper single-board-mode";
             pane2.style.display = "none";
             info.innerText = t.finalNotice;
 
             boards[1].p1 = boards[1].winner || "Player 1";
-            boards[1].p2 = boards[2].winner || "Player 2";
+            boards[1].p2 = boards[2].winner || "Bot";
             boards[1].isBot = false;
             resetBoard(1);
         }
@@ -182,7 +179,6 @@ function setupGameMode() {
             boards[2].isBot = false;
             resetBoard(2);
         } else {
-            // مرحلة النهائي المشترك
             wrapper.className = "boards-wrapper single-board-mode";
             pane2.style.display = "none";
             info.innerText = t.finalNotice;
@@ -233,12 +229,10 @@ function renderBoard(boardId) {
     }
 }
 
-// الحركة المرنة بالكامل وبكل سلاسة كما طلبت تماماً
 function handlePointClick(boardId, index) {
     let b = boards[boardId];
     if (b.isBot && b.currentPlayer === 2) return;
 
-    // Phase 1: Placing pieces
     if (b.piecesPlaced[1] < 3 || b.piecesPlaced[2] < 3) {
         if (b.piecesPlaced[b.currentPlayer] < 3 && b.state[index] === null) {
             b.state[index] = b.currentPlayer;
@@ -249,9 +243,7 @@ function handlePointClick(boardId, index) {
             }
             switchTurn(boardId);
         }
-    } 
-    // Phase 2: Moving pieces anywhere freely
-    else {
+    } else {
         if (b.selectedPoint === null) {
             if (b.state[index] === b.currentPlayer) {
                 b.selectedPoint = index;
@@ -352,19 +344,10 @@ function handleBoardWin(boardId, winnerPlayer) {
     b.winner = winnerPlayer === 1 ? b.p1 : b.p2;
 
     if (gameMode === 2 || isFinalStage) {
-        // الفائز النهائي باللعبة
         showWinModal(b.winner, true);
     } else {
-        // في وضع 3 أو 4 لاعبين، الرقعة الحالية انتهت. نتحقق هل انتهت الرقعتان معاً؟
-        if (gameMode === 3) {
-            // الرقعة 1 تنتهي بفائز، والرقعة 2 تنتهي بفائز (أو الروبوت)
-            if (boards[1].winner && boards[2].winner) {
-                showWinModal(`انتهت مرحلة التصفية! الفائزون هم: ${boards[1].winner} و ${boards[2].winner}`, false);
-            }
-        } else if (gameMode === 4) {
-            if (boards[1].winner && boards[2].winner) {
-                showWinModal(`انتهت مرحلة النصف نهائي! الفائزون هم: ${boards[1].winner} و ${boards[2].winner}`, false);
-            }
+        if (boards[1].winner && boards[2].winner) {
+            showWinModal(`تأهل للنهائي: ${boards[1].winner} و ${boards[2].winner}`, false);
         }
     }
 }
@@ -388,7 +371,6 @@ function nextTournamentStep() {
     if (gameMode === 2 || isFinalStage) {
         resetFullGame();
     } else {
-        // الانتقال للنهائي المشترك بشاشة واحدة موحدة
         isFinalStage = true;
         setupGameMode();
     }
