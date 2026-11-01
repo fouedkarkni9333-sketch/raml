@@ -12,9 +12,9 @@ const translations = {
         nextMatchBtn: "Start Grand Final!",
         playAgainBtn: "Play Again",
         champMsg: "is the Grand Champion of RAML!",
-        splitNotice3: "Split Screen: P1 vs P2 & P3 vs Bot",
-        splitNotice4: "Split Screen: P1 vs P2 & P3 vs P4",
-        finalNotice: "Grand Final Match",
+        splitNotice3: "Split Screen: Two matches running simultaneously",
+        splitNotice4: "Split Screen: Two matches running simultaneously",
+        finalNotice: "Grand Final Match (Single Board)",
         winner: "Winner:"
     },
     ar: {
@@ -30,9 +30,9 @@ const translations = {
         nextMatchBtn: "ابدأ النهائي الكبير!",
         playAgainBtn: "اللعب من جديد",
         champMsg: "هو البطل النهائي للعبة الرمل!",
-        splitNotice3: "شاشة مقسمة: (لاعب 1 ضد 2) و (لاعب 3 ضد الروبوت)",
-        splitNotice4: "شاشة مقسمة: (لاعب 1 ضد 2) و (لاعب 3 ضد 4)",
-        finalNotice: "مباراة النهائي الكبير",
+        splitNotice3: "شاشة مقسمة: مباراتان تلعبان في نفس الوقت",
+        splitNotice4: "شاشة مقسمة: مباراتان تلعبان في نفس الوقت",
+        finalNotice: "مباراة النهائي الكبير (رقعة واحدة)",
         winner: "الفائز:"
     },
     fr: {
@@ -48,9 +48,9 @@ const translations = {
         nextMatchBtn: "Grande Finale!",
         playAgainBtn: "Rejouer",
         champMsg: "est le Grand Champion de RAML!",
-        splitNotice3: "Écran partagé: P1 vs P2 & P3 vs Bot",
-        splitNotice4: "Écran partagé: P1 vs P2 & P3 vs P4",
-        finalNotice: "Grande Finale",
+        splitNotice3: "Écran partagé: Deux matchs en simultané",
+        splitNotice4: "Écran partagé: Deux matchs en simultané",
+        finalNotice: "Grande Finale (Plateau unique)",
         winner: "Gagnant:"
     }
 };
@@ -123,12 +123,10 @@ function resetFullGame() {
 
 function setupGameMode() {
     const t = translations[currentLang];
-    const wrapper = document.getElementById('boards-wrapper');
     const pane2 = document.getElementById('pane-2');
     const info = document.getElementById('tournament-info');
 
     if (gameMode === 2) {
-        wrapper.className = "boards-wrapper single-board-mode";
         pane2.style.display = "none";
         info.innerText = "";
         
@@ -139,9 +137,11 @@ function setupGameMode() {
     } 
     else if (gameMode === 3) {
         if (!isFinalStage) {
-            wrapper.className = "boards-wrapper split-board-mode";
             pane2.style.display = "block";
             info.innerText = t.splitNotice3;
+
+            document.getElementById('pane-header-1').innerText = currentLang === 'ar' ? "المباراة الأولى" : "Match 1";
+            document.getElementById('pane-header-2').innerText = currentLang === 'ar' ? "مباراة الروبوت" : "Bot Match";
 
             boards[1].p1 = currentLang === 'ar' ? "اللاعب 1" : "Player 1";
             boards[1].p2 = currentLang === 'ar' ? "اللاعب 2" : "Player 2";
@@ -153,7 +153,6 @@ function setupGameMode() {
             boards[2].isBot = true;
             resetBoard(2);
         } else {
-            wrapper.className = "boards-wrapper single-board-mode";
             pane2.style.display = "none";
             info.innerText = t.finalNotice;
 
@@ -165,9 +164,11 @@ function setupGameMode() {
     } 
     else if (gameMode === 4) {
         if (!isFinalStage) {
-            wrapper.className = "boards-wrapper split-board-mode";
             pane2.style.display = "block";
             info.innerText = t.splitNotice4;
+
+            document.getElementById('pane-header-1').innerText = currentLang === 'ar' ? "المباراة الأولى" : "Match 1";
+            document.getElementById('pane-header-2').innerText = currentLang === 'ar' ? "المباراة الثانية" : "Match 2";
 
             boards[1].p1 = currentLang === 'ar' ? "اللاعب 1" : "Player 1";
             boards[1].p2 = currentLang === 'ar' ? "اللاعب 2" : "Player 2";
@@ -179,7 +180,6 @@ function setupGameMode() {
             boards[2].isBot = false;
             resetBoard(2);
         } else {
-            wrapper.className = "boards-wrapper single-board-mode";
             pane2.style.display = "none";
             info.innerText = t.finalNotice;
 
