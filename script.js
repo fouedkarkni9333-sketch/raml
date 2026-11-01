@@ -6,11 +6,11 @@ const translations = {
         mode3: "3 Players",
         mode4: "4 Players",
         reset: "Reset Game",
-        p1Turn: "Player 1's Turn (Red)",
-        p2Turn: "Player 2's Turn (Teal)",
-        p3Turn: "Player 3's Turn (Red)",
-        p4Turn: "Player 4's Turn (Teal)",
-        botTurn: "Bot's Turn (Teal)",
+        p1Turn: "Player 1's Turn (White)",
+        p2Turn: "Player 2's Turn (Black)",
+        p3Turn: "Player 3's Turn (White)",
+        p4Turn: "Player 4's Turn (Black)",
+        botTurn: "Bot's Turn (Black)",
         winMsg: "Congratulations!",
         nextMatchBtn: "Next Match",
         playAgainBtn: "Play Again",
@@ -27,11 +27,11 @@ const translations = {
         mode3: "3 لاعبين",
         mode4: "4 لاعبين",
         reset: "إعادة اللعبة",
-        p1Turn: "دور اللاعب 1 (الأحمر)",
-        p2Turn: "دور اللاعب 2 (الأزرق)",
-        p3Turn: "دور اللاعب 3 (الأحمر)",
-        p4Turn: "دور اللاعب 4 (الأزرق)",
-        botTurn: "دور الروبوت (الأزرق)",
+        p1Turn: "دور اللاعب 1 (الأبيض)",
+        p2Turn: "دور اللاعب 2 (أسود)",
+        p3Turn: "دور اللاعب 3 (الأبيض)",
+        p4Turn: "دور اللاعب 4 (أسود)",
+        botTurn: "دور الروبوت (أسود)",
         winMsg: "مبروك الفوز!",
         nextMatchBtn: "المباراة التالية",
         playAgainBtn: "اللعب من جديد",
@@ -48,11 +48,11 @@ const translations = {
         mode3: "3 Joueurs",
         mode4: "4 Joueurs",
         reset: "Réinitialiser",
-        p1Turn: "Tour du Joueur 1 (Rouge)",
-        p2Turn: "Tour du Joueur 2 (Teal)",
-        p3Turn: "Tour du Joueur 3 (Rouge)",
-        p4Turn: "Tour du Joueur 4 (Teal)",
-        botTurn: "Tour du Bot (Teal)",
+        p1Turn: "Tour du Joueur 1 (Blanc)",
+        p2Turn: "Tour du Joueur 2 (Noir)",
+        p3Turn: "Tour du Joueur 3 (Blanc)",
+        p4Turn: "Tour du Joueur 4 (Noir)",
+        botTurn: "Tour du Bot (Noir)",
         winMsg: "Félicitations!",
         nextMatchBtn: "Match Suivant",
         playAgainBtn: "Rejouer",
@@ -67,7 +67,6 @@ const translations = {
 
 let currentLang = 'en';
 
-// --- Board & Game Logic Variables ---
 const WINNING_COMBOS = [
     [0,1,2], [3,4,5], [6,7,8], // Rows
     [0,3,6], [1,4,7], [2,5,8], // Columns
@@ -86,20 +85,18 @@ const ADJACENCY = {
     8: [5, 7, 4]
 };
 
-let boardState = Array(9).fill(null); // null, 1 (P1/Red), 2 (P2/Teal)
+let boardState = Array(9).fill(null);
 let currentPlayer = 1; 
 let piecesPlaced = { 1: 0, 2: 0 };
 let selectedPoint = null;
 
-// Tournament & Mode Setup
-let gameMode = 2; // 2, 3, or 4
-let currentStage = 1; // 1: Main Semi/First, 2: Secondary/Side, 3: Final
+let gameMode = 2;
+let currentStage = 1;
 let p1Name = "Player 1";
 let p2Name = "Player 2";
 let matchWinners = {};
 let isBotGame = false;
 
-// Initialize Page
 window.onload = () => {
     updateLanguage();
     initGame();
@@ -139,8 +136,8 @@ function setupTournamentStage() {
     isBotGame = false;
 
     if (gameMode === 2) {
-        p1Name = translations[currentLang].p1Turn.split(' ')[0] + " 1";
-        p2Name = translations[currentLang].p1Turn.split(' ')[0] + " 2";
+        p1Name = currentLang === 'ar' ? "اللاعب 1" : "Player 1";
+        p2Name = currentLang === 'ar' ? "اللاعب 2" : "Player 2";
         document.getElementById('tournament-info').innerText = "";
     } else if (gameMode === 3) {
         if (currentStage === 1) {
@@ -153,8 +150,8 @@ function setupTournamentStage() {
             isBotGame = true;
             document.getElementById('tournament-info').innerText = t.stageSideBot;
         } else if (currentStage === 3) {
-            p1Name = matchWinners[1]; // Winner of P1 vs P2
-            p2Name = matchWinners[2]; // Winner of P3 vs Bot
+            p1Name = matchWinners[1];
+            p2Name = matchWinners[2];
             document.getElementById('tournament-info').innerText = t.stageFinal + `${p1Name} vs ${p2Name}`;
         }
     } else if (gameMode === 4) {
@@ -192,7 +189,7 @@ function updateStatusText() {
     if (isBotGame && currentPlayer === 2) {
         status.innerText = t.botTurn;
     } else {
-        status.innerText = currentPlayer === 1 ? `${p1Name} (Red)` : `${p2Name} (Teal)`;
+        status.innerText = currentPlayer === 1 ? `${p1Name} (${currentLang === 'ar' ? 'أبيض' : 'White'})` : `${p2Name} (${currentLang === 'ar' ? 'أسود' : 'Black'})`;
     }
 }
 
@@ -206,11 +203,10 @@ function renderBoard() {
     }
 }
 
-// --- Player Interactions ---
 function handlePointClick(index) {
-    if (isBotGame && currentPlayer === 2) return; // Prevent human click during Bot turn
+    if (isBotGame && currentPlayer === 2) return;
 
-    // Phase 1: Placing Pieces (3 pieces each)
+    // Phase 1: Placing pieces
     if (piecesPlaced[1] < 3 || piecesPlaced[2] < 3) {
         if (piecesPlaced[currentPlayer] < 3 && boardState[index] === null) {
             boardState[index] = currentPlayer;
@@ -222,7 +218,7 @@ function handlePointClick(index) {
             switchTurn();
         }
     } 
-    // Phase 2: Moving Pieces
+    // Phase 2: Moving pieces smoothly
     else {
         if (selectedPoint === null) {
             if (boardState[index] === currentPlayer) {
@@ -230,7 +226,7 @@ function handlePointClick(index) {
             }
         } else {
             if (index === selectedPoint) {
-                selectedPoint = null; // Deselect
+                selectedPoint = null;
             } else if (boardState[index] === null && ADJACENCY[selectedPoint].includes(index)) {
                 boardState[selectedPoint] = null;
                 boardState[index] = currentPlayer;
@@ -241,7 +237,7 @@ function handlePointClick(index) {
                 }
                 switchTurn();
             } else if (boardState[index] === currentPlayer) {
-                selectedPoint = index; // Switch selection
+                selectedPoint = index;
             }
         }
     }
@@ -254,13 +250,11 @@ function switchTurn() {
     renderBoard();
 
     if (isBotGame && currentPlayer === 2) {
-        setTimeout(makeBotMove, 600); // Bot thinks for 600ms
+        setTimeout(makeBotMove, 500);
     }
 }
 
-// --- Moderate AI Logic ---
 function makeBotMove() {
-    // 1. Placement Phase
     if (piecesPlaced[2] < 3) {
         let move = getBestPlacementIndex();
         boardState[move] = 2;
@@ -269,9 +263,7 @@ function makeBotMove() {
             endMatch(2);
             return;
         }
-    } 
-    // 2. Movement Phase
-    else {
+    } else {
         let move = getBestMovementMove();
         if (move) {
             boardState[move.from] = null;
@@ -286,7 +278,6 @@ function makeBotMove() {
 }
 
 function getBestPlacementIndex() {
-    // Win if possible
     for (let i = 0; i < 9; i++) {
         if (boardState[i] === null) {
             boardState[i] = 2;
@@ -294,7 +285,6 @@ function getBestPlacementIndex() {
             boardState[i] = null;
         }
     }
-    // Block Player 1 win
     for (let i = 0; i < 9; i++) {
         if (boardState[i] === null) {
             boardState[i] = 1;
@@ -302,7 +292,6 @@ function getBestPlacementIndex() {
             boardState[i] = null;
         }
     }
-    // Prefer Center, then corners
     if (boardState[4] === null) return 4;
     const empties = boardState.map((val, idx) => val === null ? idx : null).filter(val => val !== null);
     return empties[Math.floor(Math.random() * empties.length)];
@@ -310,8 +299,6 @@ function getBestPlacementIndex() {
 
 function getBestMovementMove() {
     let myPieces = boardState.map((val, idx) => val === 2 ? idx : null).filter(val => val !== null);
-    
-    // Check win move
     for (let from of myPieces) {
         for (let to of ADJACENCY[from]) {
             if (boardState[to] === null) {
@@ -322,7 +309,6 @@ function getBestMovementMove() {
             }
         }
     }
-    // Random valid move (Medium level feel)
     let validMoves = [];
     for (let from of myPieces) {
         for (let to of ADJACENCY[from]) {
@@ -355,7 +341,7 @@ function endMatch(winner) {
     } else if (currentStage < 3) {
         winnerSubtext.innerText = `${t.winner} ${winnerName}`;
         nextBtn.innerText = t.nextMatchBtn;
-    } else { // Stage 3 Final
+    } else {
         winnerSubtext.innerText = `🏆 ${winnerName} ${t.champMsg}`;
         nextBtn.innerText = t.playAgainBtn;
     }
@@ -371,3 +357,5 @@ function nextTournamentStep() {
         setupTournamentStage();
     }
 }
+
+function initGame() {}
