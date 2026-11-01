@@ -1,29 +1,73 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAML - Desert Game</title>
+    <title>RAML - Sand Board Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <h1>RAML</h1>
-        <p id="game-status">دور اللاعب الأول (الأبيض)</p>
-        
-        <!-- رقعة اللعب -->
-        <div class="board" id="board"></div>
+        <!-- Language Switcher -->
+        <div class="header-controls">
+            <div class="lang-selector">
+                <label for="lang-select">🌐 </label>
+                <select id="lang-select" onchange="changeLanguage(this.value)">
+                    <option value="en" selected>English</option>
+                    <option value="ar">العربية</option>
+                    <option value="fr">Français</option>
+                </select>
+            </div>
+        </div>
 
-        <button id="reset-btn" onclick="resetGame()">إعادة اللعبة</button>
+        <h1 id="title-text">RAML</h1>
+
+        <!-- Mode Selection -->
+        <div class="mode-selection">
+            <button class="mode-btn active" onclick="setMode(2)" id="mode-2-btn">2 Players</button>
+            <button class="mode-btn" onclick="setMode(3)" id="mode-3-btn">3 Players</button>
+            <button class="mode-btn" onclick="setMode(4)" id="mode-4-btn">4 Players</button>
+        </div>
+
+        <!-- Match Info & Tournament Status -->
+        <div id="tournament-info" class="tournament-info"></div>
+        <p id="game-status">Player 1's Turn (Red)</p>
+
+        <!-- Board -->
+        <div class="board" id="board">
+            <!-- Grid Lines -->
+            <svg class="board-lines" viewBox="0 0 300 300">
+                <line x1="30" y1="30" x2="270" y2="30" stroke="#8b5a2b" stroke-width="4"/>
+                <line x1="30" y1="150" x2="270" y2="150" stroke="#8b5a2b" stroke-width="4"/>
+                <line x1="30" y1="270" x2="270" y2="270" stroke="#8b5a2b" stroke-width="4"/>
+                <line x1="30" y1="30" x2="30" y2="270" stroke="#8b5a2b" stroke-width="4"/>
+                <line x1="150" y1="30" x2="150" y2="270" stroke="#8b5a2b" stroke-width="4"/>
+                <line x1="270" y1="30" x2="270" y2="270" stroke="#8b5a2b" stroke-width="4"/>
+                <line x1="30" y1="30" x2="270" y2="270" stroke="#8b5a2b" stroke-width="4"/>
+                <line x1="270" y1="30" x2="30" y2="270" stroke="#8b5a2b" stroke-width="4"/>
+            </svg>
+            <!-- 9 Intersection Points -->
+            <div class="point" data-index="0" style="top: 30px; left: 30px;" onclick="handlePointClick(0)"></div>
+            <div class="point" data-index="1" style="top: 30px; left: 150px;" onclick="handlePointClick(1)"></div>
+            <div class="point" data-index="2" style="top: 30px; left: 270px;" onclick="handlePointClick(2)"></div>
+            <div class="point" data-index="3" style="top: 150px; left: 30px;" onclick="handlePointClick(3)"></div>
+            <div class="point" data-index="4" style="top: 150px; left: 150px;" onclick="handlePointClick(4)"></div>
+            <div class="point" data-index="5" style="top: 150px; left: 270px;" onclick="handlePointClick(5)"></div>
+            <div class="point" data-index="6" style="top: 270px; left: 30px;" onclick="handlePointClick(6)"></div>
+            <div class="point" data-index="7" style="top: 270px; left: 150px;" onclick="handlePointClick(7)"></div>
+            <div class="point" data-index="8" style="top: 270px; left: 270px;" onclick="handlePointClick(8)"></div>
+        </div>
+
+        <button id="reset-btn" onclick="resetFullGame()">Reset Game</button>
     </div>
 
-    <!-- نافذة الاحتفال المتحركة عند الفوز -->
+    <!-- Win Modal -->
     <div id="win-modal" class="modal">
         <div class="modal-content">
             <div class="trophy-icon">🏆</div>
-            <h2 id="winner-text">مبروك الفوز!</h2>
-            <p>لقد أحكمت السيطرة على الرمال بنجاح.</p>
-            <button onclick="resetGame()">لعب من جديد</button>
+            <h2 id="winner-text">Congratulations!</h2>
+            <p id="winner-subtext">Match finished successfully.</p>
+            <button id="modal-next-btn" onclick="nextTournamentStep()">Next Match</button>
         </div>
     </div>
 
