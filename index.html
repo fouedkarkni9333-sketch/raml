@@ -8,7 +8,6 @@
 </head>
 <body>
     <div class="game-container">
-        <!-- Header Controls -->
         <div class="header-controls">
             <div class="lang-selector">
                 <select id="lang-select" onchange="changeLanguage(this.value)">
@@ -21,32 +20,30 @@
 
         <h1 id="title-text">RAML</h1>
 
-        <!-- Mode Selection -->
         <div class="mode-selection">
             <button class="mode-btn active" onclick="setMode(2)" id="mode-2-btn">2 Players</button>
             <button class="mode-btn" onclick="setMode(3)" id="mode-3-btn">3 Players</button>
             <button class="mode-btn" onclick="setMode(4)" id="mode-4-btn">4 Players</button>
         </div>
 
-        <!-- Tournament Info -->
         <div id="tournament-info" class="tournament-info"></div>
 
-        <!-- Boards Wrapper (Single or Split) -->
-        <div id="boards-wrapper" class="boards-wrapper single-board-mode">
+        <div id="boards-wrapper" class="boards-wrapper">
             
             <!-- BOARD 1 -->
             <div class="board-pane" id="pane-1">
+                <div class="pane-header" id="pane-header-1">Match 1</div>
                 <p id="game-status-1" class="pane-status">Player 1 : Turn (White)</p>
                 <div class="board" id="board-1">
                     <svg class="board-lines" viewBox="0 0 340 340">
-                        <line x1="35" y1="35" x2="305" y2="35" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="35" y1="170" x2="305" y2="170" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="35" y1="305" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="35" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="170" y1="35" x2="170" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="305" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="35" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="305" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="35" x2="305" y2="35" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="35" y1="170" x2="305" y2="170" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="35" y1="305" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="35" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="170" y1="35" x2="170" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="305" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="35" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="305" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
                     </svg>
                     <div class="point" data-board="1" data-index="0" style="top: 10.3%; left: 10.3%;" onclick="handlePointClick(1, 0)"></div>
                     <div class="point" data-board="1" data-index="1" style="top: 10.3%; left: 50%;" onclick="handlePointClick(1, 1)"></div>
@@ -62,17 +59,18 @@
 
             <!-- BOARD 2 (Split Screen) -->
             <div class="board-pane" id="pane-2" style="display: none;">
+                <div class="pane-header" id="pane-header-2">Match 2</div>
                 <p id="game-status-2" class="pane-status">Player 3 : Turn (White)</p>
                 <div class="board" id="board-2">
                     <svg class="board-lines" viewBox="0 0 340 340">
-                        <line x1="35" y1="35" x2="305" y2="35" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="35" y1="170" x2="305" y2="170" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="35" y1="305" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="35" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="170" y1="35" x2="170" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="305" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="35" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
-                        <line x1="305" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.5" stroke-width="5"/>
+                        <line x1="35" y1="35" x2="305" y2="35" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="35" y1="170" x2="305" y2="170" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="35" y1="305" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="35" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="170" y1="35" x2="170" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="305" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="35" y1="35" x2="305" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
+                        <line x1="305" y1="35" x2="35" y2="305" stroke="#d4af37" stroke-opacity="0.6" stroke-width="4"/>
                     </svg>
                     <div class="point" data-board="2" data-index="0" style="top: 10.3%; left: 10.3%;" onclick="handlePointClick(2, 0)"></div>
                     <div class="point" data-board="2" data-index="1" style="top: 10.3%; left: 50%;" onclick="handlePointClick(2, 1)"></div>
